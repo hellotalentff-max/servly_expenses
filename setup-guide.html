@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Servly Expenses — Setup Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --slate:#1e2d2d; --teal:#3d6b61; --teal-lt:#51897d;
+  --amber:#c8824a; --amber-lt:#d79068; --amber-bg:rgba(200,130,74,0.08);
+  --cream:#f5f0e8; --cream-dk:#ede6d8;
+  --white:#ffffff; --text:#1a2626; --muted:#6b8080;
+  --border:rgba(61,107,97,0.15); --success:#3d8c6e;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);font-size:14px;line-height:1.7;}
+a{color:var(--teal);text-decoration:none;}
+a:hover{text-decoration:underline;}
+code{font-family:'DM Mono',monospace;background:var(--cream-dk);padding:2px 6px;border-radius:4px;font-size:12px;color:var(--slate);}
+pre{background:var(--slate);color:rgba(245,240,232,0.85);padding:16px 20px;border-radius:10px;font-size:12px;overflow-x:auto;margin:16px 0;line-height:1.6;font-family:'DM Mono',monospace;}
+
+nav{background:var(--slate);padding:14px 32px;display:flex;align-items:center;justify-content:space-between;}
+.nav-logo{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:#fff;}
+.nav-logo span{color:var(--amber);}
+.nav-links{display:flex;gap:24px;}
+.nav-links a{font-size:12px;color:rgba(245,240,232,0.45);transition:color .2s;}
+.nav-links a:hover{color:var(--amber-lt);text-decoration:none;}
+
+.doc-wrap{max-width:760px;margin:0 auto;padding:48px 24px 80px;}
+
+.doc-header{padding:40px 0 32px;border-bottom:2px solid var(--border);margin-bottom:48px;}
+.doc-eyebrow{font-size:10px;font-weight:500;letter-spacing:3px;text-transform:uppercase;color:var(--amber);margin-bottom:12px;}
+.doc-title{font-family:'Playfair Display',serif;font-size:40px;font-weight:700;color:var(--slate);line-height:1.1;margin-bottom:16px;}
+.doc-sub{font-size:15px;color:var(--muted);max-width:540px;}
+.doc-meta{display:flex;gap:20px;margin-top:20px;flex-wrap:wrap;}
+.doc-meta-item{font-size:11px;color:var(--muted);}
+
+/* Tier badges */
+.tier-badge{display:inline-block;font-size:9px;font-weight:600;padding:2px 8px;border-radius:10px;letter-spacing:1px;text-transform:uppercase;margin-left:6px;vertical-align:middle;}
+.tb-basic{background:rgba(138,107,112,0.12);color:#8a6b70;}
+.tb-pro{background:rgba(61,107,97,0.12);color:#3d6b61;}
+.tb-biz{background:var(--amber-bg);color:var(--amber);}
+.tb-all{background:rgba(30,45,45,0.08);color:var(--slate);}
+
+/* TOC */
+.toc{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:24px 28px;margin-bottom:48px;}
+.toc-title{font-size:11px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:14px;}
+.toc-list{list-style:none;display:flex;flex-direction:column;gap:6px;}
+.toc-list a{font-size:13px;color:var(--text);display:flex;align-items:center;gap:8px;}
+.toc-list a:hover{color:var(--amber);text-decoration:none;}
+.toc-num{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);min-width:22px;}
+
+/* Sections */
+.section{margin-bottom:56px;}
+.section-num{font-family:'Playfair Display',serif;font-size:13px;color:var(--amber);font-weight:700;margin-bottom:4px;}
+.section-title{font-family:'Playfair Display',serif;font-size:26px;font-weight:700;color:var(--slate);margin-bottom:16px;line-height:1.2;}
+.section p{margin-bottom:14px;color:var(--text);}
+
+/* Steps */
+.step-list{display:flex;flex-direction:column;gap:0;counter-reset:step;}
+.step-item{display:flex;gap:20px;padding:20px 0;border-bottom:1px solid var(--border);}
+.step-item:last-child{border:none;}
+.step-num-circle{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:16px;font-weight:700;flex-shrink:0;}
+.step-num-circle.amber{background:var(--amber);color:#fff;}
+.step-num-circle.teal{background:var(--teal);color:#fff;}
+.step-num-circle.slate{background:var(--slate);color:#fff;}
+.step-content{flex:1;}
+.step-title{font-size:15px;font-weight:500;color:var(--slate);margin-bottom:6px;}
+.step-desc{font-size:13px;color:var(--muted);line-height:1.7;}
+.step-note{background:var(--amber-bg);border-left:3px solid var(--amber);padding:10px 14px;border-radius:0 8px 8px 0;font-size:12px;color:var(--text);margin-top:10px;line-height:1.6;}
+
+/* Callouts */
+.callout{border-radius:10px;padding:14px 18px;margin:18px 0;font-size:13px;line-height:1.7;}
+.callout.info{background:rgba(61,107,97,0.07);border:1px solid rgba(61,107,97,0.2);color:var(--teal);}
+.callout.warn{background:var(--amber-bg);border:1px solid rgba(200,130,74,0.25);}
+.callout.tip{background:var(--cream-dk);border:1px solid var(--border);}
+.callout strong{font-weight:600;}
+
+/* Feature table */
+.feat-table{width:100%;border-collapse:collapse;margin:16px 0;font-size:13px;}
+.feat-table th{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);font-weight:500;text-align:left;padding:8px 12px;border-bottom:2px solid var(--border);}
+.feat-table td{padding:9px 12px;border-bottom:1px solid var(--border);vertical-align:top;}
+.feat-table tr:last-child td{border:none;}
+.feat-table td:first-child{font-weight:500;}
+.check{color:var(--success);}
+.divider{border:none;border-top:1px solid var(--border);margin:48px 0;}
+.faq-q{font-weight:500;color:var(--slate);margin-bottom:4px;margin-top:20px;}
+.faq-a{color:var(--muted);font-size:13px;}
+
+@media(max-width:600px){
+  nav{padding:12px 16px;} .nav-links{gap:12px;}
+  .doc-wrap{padding:32px 16px 60px;}
+  .doc-title{font-size:28px;}
+  .step-item{flex-direction:column;gap:8px;}
+}
+@media print{nav,.doc-meta{display:none;} .doc-wrap{padding:20px;}}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">Serv<span>ly</span> <span style="font-family:'DM Sans',sans-serif;font-weight:300;font-size:13px;color:rgba(245,240,232,0.4);">/ Expenses Setup Guide</span></div>
+  <div class="nav-links">
+    <a href="index.html">← Product page</a>
+    <a href="sales.html">Buy now</a>
+  </div>
+</nav>
+
+<div class="doc-wrap">
+
+  <div class="doc-header">
+    <div class="doc-eyebrow">Documentation</div>
+    <h1 class="doc-title">Servly Expenses<br>Setup Guide</h1>
+    <p class="doc-sub">Get your expense tracker running in 2 minutes. Covers all three plans — Basic, Professional, and Business.</p>
+    <div class="doc-meta">
+      <span class="doc-meta-item">📅 Version 2.0 · May 2026</span>
+      <span class="doc-meta-item">⏱ 2–10 min setup</span>
+      <span class="doc-meta-item">💻 Any browser</span>
+    </div>
+  </div>
+
+  <!-- TOC -->
+  <div class="toc">
+    <div class="toc-title">Contents</div>
+    <ul class="toc-list">
+      <li><a href="#s0"><span class="toc-num">00</span> What plan am I on?</a></li>
+      <li><a href="#s1"><span class="toc-num">01</span> What you received</a></li>
+      <li><a href="#s2"><span class="toc-num">02</span> Opening the app</a></li>
+      <li><a href="#s3"><span class="toc-num">03</span> Add to home screen (mobile)</a></li>
+      <li><a href="#s4"><span class="toc-num">04</span> Host on GitHub Pages (optional)</a></li>
+      <li><a href="#s5"><span class="toc-num">05</span> Logging your first expense</a></li>
+      <li><a href="#s6"><span class="toc-num">06</span> Budget limits &amp; alerts</a></li>
+      <li><a href="#s7"><span class="toc-num">07</span> Recurring expenses</a></li>
+      <li><a href="#s8"><span class="toc-num">08</span> Business — branches &amp; staff</a></li>
+      <li><a href="#s9"><span class="toc-num">09</span> Business — Google Sheets sync</a></li>
+      <li><a href="#s10"><span class="toc-num">10</span> Business — approval workflow</a></li>
+      <li><a href="#s11"><span class="toc-num">11</span> Exporting data &amp; PDF reports</a></li>
+      <li><a href="#s12"><span class="toc-num">12</span> Backing up your data</a></li>
+      <li><a href="#s13"><span class="toc-num">13</span> Troubleshooting</a></li>
+    </ul>
+  </div>
+
+  <!-- S0 -->
+  <div class="section" id="s0">
+    <div class="section-num">00</div>
+    <h2 class="section-title">What plan am I on?</h2>
+    <p>Open Servly Expenses in your browser and look at the bottom-left corner of the sidebar. You'll see a colored badge — <strong>Basic</strong>, <strong>Pro</strong>, or <strong>Business</strong>. That's your current plan.</p>
+    <table class="feat-table">
+      <thead><tr><th>Feature</th><th>Basic <span class="tier-badge tb-basic">₱799</span></th><th>Pro <span class="tier-badge tb-pro">₱1,499</span></th><th>Business <span class="tier-badge tb-biz">₱2,999</span></th></tr></thead>
+      <tbody>
+        <tr><td>Expense log + CSV import/export</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+        <tr><td>Dashboard, reports, pie chart</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+        <tr><td>Custom categories (unlimited)</td><td>—</td><td class="check">✓</td><td class="check">✓</td></tr>
+        <tr><td>Budget limits + over-budget alerts</td><td>—</td><td class="check">✓</td><td class="check">✓</td></tr>
+        <tr><td>Receipt photo attachment</td><td>—</td><td class="check">✓</td><td class="check">✓</td></tr>
+        <tr><td>Recurring expense tracker</td><td>—</td><td class="check">✓</td><td class="check">✓</td></tr>
+        <tr><td>Profit &amp; loss summary</td><td>—</td><td class="check">✓</td><td class="check">✓</td></tr>
+        <tr><td>Multi-branch / location view</td><td>—</td><td>—</td><td class="check">✓</td></tr>
+        <tr><td>Staff expense logging</td><td>—</td><td>—</td><td class="check">✓</td></tr>
+        <tr><td>Approval workflow</td><td>—</td><td>—</td><td class="check">✓</td></tr>
+        <tr><td>Google Sheets sync</td><td>—</td><td>—</td><td class="check">✓</td></tr>
+        <tr><td>PDF report export</td><td>—</td><td>—</td><td class="check">✓</td></tr>
+        <tr><td>Custom branding + color</td><td>—</td><td>—</td><td class="check">✓</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <hr class="divider">
+
+  <!-- S1 -->
+  <div class="section" id="s1">
+    <div class="section-num">01</div>
+    <h2 class="section-title">What you received</h2>
+    <table class="feat-table">
+      <thead><tr><th>File</th><th>Plan</th><th>What it is</th></tr></thead>
+      <tbody>
+        <tr><td><code>Servly_Expenses.html</code></td><td><span class="tier-badge tb-all">All</span></td><td>The complete app — open in any browser</td></tr>
+        <tr><td><code>Setup_Guide.html</code></td><td><span class="tier-badge tb-all">All</span></td><td>This guide</td></tr>
+        <tr><td><code>GitHub_Deploy_Guide.pdf</code></td><td><span class="tier-badge tb-all">All</span></td><td>Step-by-step for free team hosting</td></tr>
+        <tr><td><code>Servly_Expenses_GAS.gs</code></td><td><span class="tier-badge tb-biz">Business</span></td><td>Google Apps Script for Sheets sync</td></tr>
+      </tbody>
+    </table>
+    <div class="callout info"><strong>One file does everything.</strong> <code>Servly_Expenses.html</code> contains the full app — dashboard, reports, categories, business features. Your plan tier unlocks the right features automatically.</div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- S2 -->
+  <div class="section" id="s2">
+    <div class="section-num">02</div>
+    <h2 class="section-title">Opening the app <span class="tier-badge tb-all">All plans</span></h2>
+    <div class="step-list">
+      <div class="step-item">
+        <div class="step-num-circle amber">A</div>
+        <div class="step-content">
+          <div class="step-title">Open directly on your device</div>
+          <div class="step-desc">Download <code>Servly_Expenses.html</code> to your device. Double-click it — it opens in your default browser. Works completely offline from this point on.</div>
+          <div class="step-note"><strong>Best for:</strong> Single device, no team sharing needed</div>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num-circle teal">B</div>
+        <div class="step-content">
+          <div class="step-title">Host on GitHub Pages (free)</div>
+          <div class="step-desc">Upload to a free GitHub repository and get a public URL — e.g. <code>yourbiz.github.io/expenses</code>. Any phone, tablet, or desktop can open it. See <a href="#s4">Section 04</a> for full steps.</div>
+          <div class="step-note"><strong>Best for:</strong> Teams, multiple devices, Business plan</div>
+        </div>
+      </div>
+    </div>
+    <div class="callout warn" style="margin-top:20px;"><strong>Browser note:</strong> Use Chrome, Edge, or Safari. Open the file directly in the browser — not in the Files app on iPhone.</div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- S3 -->
+  <div class="section" id="s3">
+    <div class="section-num">03</div>
+    <h2 class="section-title">Add to home screen (mobile) <span class="tier-badge tb-all">All plans</span></h2>
+    <div class="step-list">
+      <div class="step-item">
+        <div class="step-num-circle amber">1</div>
+        <div class="step-content">
+          <div class="step-title">iPhone / iPad — Safari only</div>
+          <div class="step-desc">Open your URL in <strong>Safari</strong>. Tap the Share button (box with arrow). Scroll and tap <strong>Add to Home Screen</strong>. Name it "Expenses" → Add.</div>
+          <div class="step-note">Must use Safari. Chrome on iPhone does not support Add to Home Screen.</div>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num-circle teal">2</div>
+        <div class="step-content">
+          <div class="step-title">Android — Chrome</div>
+          <div class="step-desc">Open your URL in Chrome. Tap ⋮ (three dots) → <strong>Add to Home screen</strong> → Add. The app icon appears on your home screen and opens full-screen like a native app.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- S4 -->
+  <div class="section" id="s4">
+    <div class="section-num">04</div>
+    <h2 class="section-title">Host on GitHub Pages <span class="tier-badge tb-all">All plans</span></h2>
+    <div class="step-list">
+      <div class="step-item"><div class="step-num-circle slate">1</div><div class="step-content"><div class="step-title">Create a free GitHub account</div><div class="step-desc">Go to <a href="https://github.com" target="_blank">github.com</a> and sign up for free.</div></div></div>
+      <div class="step-item"><div class="step-num-circle slate">2</div><div class="step-content"><div class="step-title">Create a new repository</div><div class="step-desc">Click <strong>+</strong> → <strong>New repository</strong>. Name it <code>expenses</code>. Set to <strong>Public</strong>. Click <strong>Create repository</strong>.</div></div></div>
+      <div class="step-item"><div class="step-num-circle slate">3</div><div class="step-content"><div class="step-title">Upload the file</div><div class="step-desc">Click <strong>uploading an existing file</strong>. Drag <code>Servly_Expenses.html</code> in. <strong>Rename it to <code>index.html</code> before uploading.</strong> Click <strong>Commit changes</strong>.</div><div class="step-note"><strong>Important:</strong> File must be named <code>index.html</code> for GitHub Pages to serve it.</div></div></div>
+      <div class="step-item"><div class="step-num-circle slate">4</div><div class="step-content"><div class="step-title">Enable GitHub Pages</div><div class="step-desc">Go to <strong>Settings → Pages</strong>. Source: <strong>Deploy from a branch</strong>. Branch: <strong>main</strong>, folder: <strong>/ (root)</strong>. Click <strong>Save</strong>.</div></div></div>
+      <div class="step-item"><div class="step-num-circle amber">5</div><div class="step-content"><div class="step-title">Get your URL</div><div class="step-desc">After 1–2 minutes: <code>yourusername.github.io/expenses</code> is live. Share this with your staff. Bookmark it on every device.</div></div></div>
+    </div>
+    <div class="callout tip"><strong>Note:</strong> Each device has its own localStorage — expenses logged on one device don't sync to another automatically. Business plan users can use Google Sheets sync to centralize data. All users can export CSV and consolidate manually.</div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- S5 -->
+  <div class="section" id="s5">
+    <div class="section-num">05</div>
+    <h2 class="section-title">Logging your first expense <span class="tier-badge tb-all">All plans</span></h2>
+    <div class="step-list">
+      <div class="step-item"><div class="step-num-circle amber">1</div><div class="step-content"><div class="step-title">Click "Add Expense"</div><div class="step-desc">Top-right button on any page. On mobile, tap the <strong>+</strong> floating button above the bottom tab bar.</div></div></div>
+      <div class="step-item"><div class="step-num-circle amber">2</div><div class="step-content"><div class="step-title">Fill in the form</div><div class="step-desc"><strong>Date</strong> — today by default. Change for past expenses.<br><strong>Amount</strong> — pesos, decimals supported.<br><strong>Description</strong> — what you bought (e.g. "Syringes and needles").<br><strong>Category</strong> — pick from your categories.<br><strong>Payment type</strong> — Cash, GCash, Card, Bank Transfer, Maya.<br><strong>Notes</strong> — optional. Supplier name, receipt number.</div></div></div>
+      <div class="step-item"><div class="step-num-circle amber">3</div><div class="step-content"><div class="step-title">Click Save</div><div class="step-desc">The expense saves instantly. Dashboard updates in real time. No internet needed.</div></div></div>
+    </div>
+    <div class="callout info"><strong>Edit or delete:</strong> Go to the Expenses page. Click the ✏ pencil to edit or the 🗑 trash icon to delete any entry.</div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- S6 -->
+  <div class="section" id="s6">
+    <div class="section-num">06</div>
+    <h2 class="section-title">Budget limits &amp; alerts <span class="tier-badge tb-pro">Pro</span> <span class="tier-badge tb-biz">Business</span></h2>
+    <p>Set a monthly spending cap per category. When you exceed it, a red alert bar appears on the dashboard and the category shows an over-budget warning.</p>
+    <div class="step-list">
+      <div class="step-item"><div class="step-num-circle teal">1</div><div class="step-content"><div class="step-title">Go to Categories</div><div class="step-desc">Click <strong>Categories</strong> in the sidebar (or bottom nav on mobile).</div></div></div>
+      <div class="step-item"><div class="step-num-circle teal">2</div><div class="step-content"><div class="step-title">Set a budget for any category</div><div class="step-desc">Next to each category, tap the budget field and enter a monthly limit (e.g. ₱5,000 for Supplies). Leave blank for no limit.</div></div></div>
+      <div class="step-item"><div class="step-num-circle teal">3</div><div class="step-content"><div class="step-title">Watch the alerts</div><div class="step-desc">The dashboard shows a progress bar per category. When spending exceeds the budget, the bar turns red and a badge appears. Resets automatically each month.</div></div></div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- S7 -->
+  <div class="section" id="s7">
+    <div class="section-num">07</div>
+    <h2 class="section-title">Recurring expenses <span class="tier-badge tb-pro">Pro</span> <span class="tier-badge tb-biz">Business</span></h2>
+    <p>Set up monthly fixed costs — rent, internet, software subscriptions — once. The app reminds you to log them and can auto-create the entry on the due date.</p>
+    <div class="step-list">
+      <div class="step-item"><div class="step-num-circle teal">1</div><div class="step-content"><div class="step-title">Open Add Expense → mark as Recurring</div><div class="step-desc">When adding any expense, toggle <strong>Recurring monthly</strong>. Set the day of month it recurs (e.g. day 1 for rent).</div></div></div>
+      <div class="step-item"><div class="step-num-circle teal">2</div><div class="step-content"><div class="step-title">View recurring list</div><div class="step-desc">Go to <strong>Categories → Recurring</strong> tab to see all active recurring expenses, their next due date, and how many months they've been logged.</div></div></div>
+      <div class="step-item"><div class="step-num-circle teal">3</div><div class="step-content"><div class="step-title">Dashboard reminder</div><div class="step-desc">On the due date, a <strong>Recurring due today</strong> banner appears on the dashboard with one-tap logging.</div></div></div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- S8 -->
+  <div class="section" id="s8">
+    <div class="section-num">08</div>
+    <h2 class="section-title">Branches &amp; staff <span class="tier-badge tb-biz">Business</span></h2>
+    <div class="step-list">
+      <div class="step-item"><div class="step-num-circle amber">1</div><div class="step-content"><div class="step-title">Go to Business tab</div><div class="step-desc">Click <strong>Business</strong> in the sidebar or bottom nav. You'll see Branch Management, Staff, Approvals, Sheets Sync, and Branding sections.</div></div></div>
+      <div class="step-item"><div class="step-num-circle amber">2</div><div class="step-content"><div class="step-title">Add your branches</div><div class="step-desc">Click <strong>+ Add Branch</strong>. Name each location (e.g. "Main Clinic", "Makati Branch"). Each branch gets a color. Click its pill to switch to it — all expenses you log are tagged to the active branch.</div></div></div>
+      <div class="step-item"><div class="step-num-circle amber">3</div><div class="step-content"><div class="step-title">Add staff members</div><div class="step-desc">Click <strong>+ Add Staff</strong>. Enter name and role (e.g. "Ana Cruz — Cashier"). When logging an expense, you can assign it to a staff member. Filter by staff on the Expenses page.</div></div></div>
+    </div>
+    <div class="callout tip"><strong>Tip:</strong> Each device has its own localStorage. For true multi-device branch sync, set up Google Sheets sync (Section 09) — all branches push data to one central sheet.</div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- S9 -->
+  <div class="section" id="s9">
+    <div class="section-num">09</div>
+    <h2 class="section-title">Google Sheets sync <span class="tier-badge tb-biz">Business</span></h2>
+    <p>Sync all your expenses to a Google Sheet with one click. Your accountant can access the sheet, run their own formulas, or pull it into their own reporting tools.</p>
+    <div class="step-list">
+      <div class="step-item"><div class="step-num-circle slate">1</div><div class="step-content"><div class="step-title">Open Google Sheets</div><div class="step-desc">Create a new blank Google Sheet. Name it <strong>Servly Expenses</strong>.</div></div></div>
+      <div class="step-item"><div class="step-num-circle slate">2</div><div class="step-content"><div class="step-title">Open Apps Script</div><div class="step-desc">Click <strong>Extensions → Apps Script</strong>. Delete all existing code in <code>Code.gs</code>.</div></div></div>
+      <div class="step-item"><div class="step-num-circle slate">3</div><div class="step-content"><div class="step-title">Paste the GAS file</div><div class="step-desc">Open <code>Servly_Expenses_GAS.gs</code> from your delivery package. Copy the entire contents and paste it into Apps Script. Click <strong>Save</strong> (Ctrl+S / Cmd+S).</div></div></div>
+      <div class="step-item"><div class="step-num-circle slate">4</div><div class="step-content"><div class="step-title">Deploy as Web App</div><div class="step-desc">Click <strong>Deploy → New deployment</strong>.<br>Type: <strong>Web app</strong>.<br>Execute as: <strong>Me</strong>.<br>Who has access: <strong>Anyone</strong>.<br>Click <strong>Deploy</strong>. Authorize when prompted.<br>Copy the <strong>Web app URL</strong> it gives you.</div><div class="step-note"><strong>Keep this URL private.</strong> Anyone with it can write to your sheet.</div></div></div>
+      <div class="step-item"><div class="step-num-circle amber">5</div><div class="step-content"><div class="step-title">Paste URL in Servly Expenses</div><div class="step-desc">Go to <strong>Business → Google Sheets Sync</strong>. Paste your Web App URL in the field. Click <strong>Save URL</strong> then <strong>Sync Now</strong>.</div></div></div>
+      <div class="step-item"><div class="step-num-circle amber">6</div><div class="step-content"><div class="step-title">Check your sheet</div><div class="step-desc">All expenses appear in a tab called <strong>Expenses</strong>. Categories appear in <strong>Categories</strong>. Run Sync Now any time to push updates.</div></div></div>
+    </div>
+    <div class="callout warn"><strong>Re-deploy after changes:</strong> If you edit the GAS file, go to Deploy → Manage deployments → edit → New version → Deploy. The URL stays the same.</div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- S10 -->
+  <div class="section" id="s10">
+    <div class="section-num">10</div>
+    <h2 class="section-title">Approval workflow <span class="tier-badge tb-biz">Business</span></h2>
+    <p>Staff submit expenses that a manager reviews before they're counted in reports. Useful for petty cash control or verifying purchase claims.</p>
+    <div class="step-list">
+      <div class="step-item"><div class="step-num-circle amber">1</div><div class="step-content"><div class="step-title">Staff: submit an expense for approval</div><div class="step-desc">When adding an expense, toggle <strong>Submit for approval</strong>. The expense is saved as <em>Pending</em> — it appears in reports with a pending badge but is excluded from totals until approved.</div></div></div>
+      <div class="step-item"><div class="step-num-circle amber">2</div><div class="step-content"><div class="step-title">Manager: open Pending Approvals</div><div class="step-desc">Go to <strong>Business → Pending Approvals</strong>. Each pending expense shows: staff name, description, amount, date.</div></div></div>
+      <div class="step-item"><div class="step-num-circle amber">3</div><div class="step-content"><div class="step-title">Approve or reject</div><div class="step-desc">Click <strong>✓ Approve</strong> to accept — expense is now counted in all totals. Click <strong>✕ Reject</strong> to remove it permanently.</div></div></div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- S11 -->
+  <div class="section" id="s11">
+    <div class="section-num">11</div>
+    <h2 class="section-title">Exporting data &amp; PDF reports <span class="tier-badge tb-all">All plans</span></h2>
+    <div class="step-list">
+      <div class="step-item"><div class="step-num-circle teal">A</div><div class="step-content"><div class="step-title">Export all expenses as CSV</div><div class="step-desc">Click <strong>Export CSV</strong> in the sidebar. Downloads every expense ever logged. Open in Excel or Google Sheets.</div></div></div>
+      <div class="step-item"><div class="step-num-circle teal">B</div><div class="step-content"><div class="step-title">Export a period report as CSV</div><div class="step-desc">Go to <strong>Reports</strong>. Select a month and year. Click <strong>Export report</strong> — downloads only that period. Ideal for monthly accountant submissions.</div></div></div>
+      <div class="step-item"><div class="step-num-circle amber">C</div><div class="step-content"><div class="step-title">Export as PDF <span class="tier-badge tb-biz">Business</span></div><div class="step-desc">Go to <strong>Business → PDF Report Export</strong>. Set a date range (or click <em>This month</em>). Click <strong>Export PDF</strong> — a print-ready page opens. Use your browser's <strong>Print → Save as PDF</strong>. Includes your branding color, category breakdown, and full expense table.</div></div></div>
+    </div>
+    <div class="callout tip"><strong>Monthly habit:</strong> Export a CSV at the end of every month and save to Google Drive. This gives you a permanent backup and an easy file to send your accountant.</div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- S12 -->
+  <div class="section" id="s12">
+    <div class="section-num">12</div>
+    <h2 class="section-title">Backing up your data <span class="tier-badge tb-all">All plans</span></h2>
+    <p>Servly Expenses stores data in your browser's <code>localStorage</code>. This data persists between sessions but can be lost if you:</p>
+    <ul style="margin:10px 0 16px 20px;display:flex;flex-direction:column;gap:5px;color:var(--muted);font-size:13px;">
+      <li>Clear your browser's site data or cache</li>
+      <li>Switch to a different browser or device</li>
+      <li>Reinstall the browser</li>
+    </ul>
+    <div class="callout warn"><strong>Best practice:</strong> Export a CSV every month and save it to Google Drive. Business plan users: run Sync Now weekly to keep your Google Sheet current. This is your insurance policy.</div>
+    <p><strong>Do not</strong> use your browser's "Clear all site data" setting for the domain where Servly Expenses is hosted — this will erase your data. If you need to clear cache, use "Clear cached images and files" only, not "Cookies and site data".</p>
+  </div>
+
+  <hr class="divider">
+
+  <!-- S13 -->
+  <div class="section" id="s13">
+    <div class="section-num">13</div>
+    <h2 class="section-title">Troubleshooting</h2>
+
+    <div class="faq-q">My data disappeared after clearing the browser</div>
+    <div class="faq-a" style="margin-bottom:20px;">localStorage was cleared. Restore from your CSV backup by using Import CSV on the Expenses page. This is why monthly CSV exports are strongly recommended.</div>
+
+    <div class="faq-q">The app shows no expenses on a different device</div>
+    <div class="faq-a" style="margin-bottom:20px;">Each browser on each device has its own localStorage — data doesn't sync automatically. Business plan: use Google Sheets sync to centralize. All plans: export CSV from one device and import on another.</div>
+
+    <div class="faq-q">Charts don't appear (blank canvas)</div>
+    <div class="faq-a" style="margin-bottom:20px;">Charts load Chart.js from a CDN — they need internet on first load. After the first load with internet, they're cached. If you're offline and charts are blank: open the app once while connected, then it works offline from then on.</div>
+
+    <div class="faq-q">Google Sheets sync says "Network error"</div>
+    <div class="faq-a" style="margin-bottom:20px;">Check that: (1) your GAS file is deployed as a Web App, (2) Access is set to "Anyone", and (3) you copied the full URL including <code>https://</code>. If you edited the GAS file, you must re-deploy (Deploy → Manage deployments → New version).</div>
+
+    <div class="faq-q">Add to Home Screen doesn't appear on iPhone</div>
+    <div class="faq-a" style="margin-bottom:20px;">You must use Safari — not Chrome, not Edge. Open the URL in Safari → Share button → Add to Home Screen.</div>
+
+    <div class="faq-q">Import CSV isn't working — "no data rows" error</div>
+    <div class="faq-a" style="margin-bottom:20px;">Your CSV must have at least these columns: <code>Date</code>, <code>Description</code>, <code>Amount</code>. Column headers must be in the first row. Dates must be in <code>YYYY-MM-DD</code> format. Export a sample from Servly Expenses and compare it to your import file.</div>
+
+    <div class="callout info" style="margin-top:24px;"><strong>Still stuck?</strong> Message us on <a href="https://m.me/mclubcreo" target="_blank">Facebook Messenger</a>. Business plan owners get priority support — we'll reply within a few hours.</div>
+  </div>
+
+  <a href="#" style="display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);margin-top:40px;">↑ Back to top</a>
+
+</div>
+</body>
+</html>

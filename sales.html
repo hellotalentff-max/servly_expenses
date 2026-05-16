@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Buy Servly Expenses — Choose Your Plan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;0,900&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --promo:var(--amber);
+}
+.promo-bar{background:var(--amber);color:#fff;text-align:center;padding:10px 20px;font-size:13px;font-weight:500;}
+:root{
+  --slate:#1e2d2d; --teal:#3d6b61; --teal-lt:#51897d;
+  --amber:#c8824a; --amber-lt:#d79068; --amber-bg:rgba(200,130,74,0.08);
+  --cream:#f5f0e8; --cream-dk:#ede6d8; --cream3:#e8dfd3;
+  --white:#ffffff; --text:#1a2626; --muted:#6b8080;
+  --border:rgba(61,107,97,0.18); --danger:#c0544a; --success:#3d8c6e;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);min-height:100vh;}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:1000;opacity:0.6;}
+.serif{font-family:'Playfair Display',serif;}
+.mono{font-family:'DM Mono',monospace;}
+
+/* NAV */
+nav{background:rgba(245,240,232,0.88);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:16px 48px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
+.nav-logo{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--slate);}
+.nav-logo span{color:var(--amber);}
+.nav-logo sup{font-family:'DM Sans',sans-serif;font-size:9px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:var(--muted);vertical-align:super;margin-left:3px;}
+.nav-back{font-size:13px;color:var(--muted);text-decoration:none;display:flex;align-items:center;gap:6px;transition:color .2s;}
+.nav-back:hover{color:var(--teal);}
+
+/* HERO */
+.hero{text-align:center;padding:56px 24px 48px;max-width:640px;margin:0 auto;}
+.hero-eyebrow{font-size:10px;font-weight:500;letter-spacing:3px;text-transform:uppercase;color:var(--amber);margin-bottom:14px;}
+.hero-title{font-family:'Playfair Display',serif;font-size:clamp(30px,5vw,48px);font-weight:700;color:var(--slate);line-height:1.1;margin-bottom:14px;}
+.hero-sub{font-size:15px;line-height:1.8;color:var(--muted);}
+
+/* TIER SELECTOR */
+.tier-selector{max-width:880px;margin:0 auto;padding:0 24px 56px;}
+
+.tier-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:40px;}
+.tier-tab{background:var(--white);border:1.5px solid var(--border);border-radius:14px;padding:20px 18px;cursor:pointer;transition:all .2s;text-align:left;position:relative;}
+.tier-tab:hover{border-color:var(--amber);transform:translateY(-2px);box-shadow:0 6px 20px rgba(200,130,74,0.12);}
+.tier-tab.active{border:2px solid var(--amber);background:var(--white);box-shadow:0 0 0 3px rgba(200,130,74,0.12);}
+.tier-tab-badge{position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:var(--amber);color:#fff;font-size:10px;font-weight:600;padding:3px 12px;border-radius:20px;white-space:nowrap;letter-spacing:.5px;}
+.tier-tab-name{font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;}
+.tier-tab-price{font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:var(--slate);line-height:1;margin-bottom:4px;}
+.tier-tab-period{font-size:11px;color:var(--muted);margin-bottom:12px;}
+.tier-tab-desc{font-size:12px;color:var(--muted);line-height:1.6;}
+
+/* CHECKOUT PANELS */
+.checkout-panel{display:none;}
+.checkout-panel.active{display:grid;grid-template-columns:1fr 380px;gap:32px;align-items:start;}
+
+/* LEFT — features */
+.feat-section{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:28px;}
+.feat-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--slate);margin-bottom:6px;}
+.feat-sub{font-size:13px;color:var(--muted);margin-bottom:24px;line-height:1.6;}
+.feat-group{margin-bottom:20px;}
+.feat-group-label{font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;}
+.feat-list{display:flex;flex-direction:column;gap:8px;}
+.feat-item{display:flex;align-items:flex-start;gap:10px;font-size:13px;color:var(--text);}
+.feat-check{width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+.feat-check.green{background:var(--teal);}
+.feat-check.amber{background:var(--amber);}
+.feat-check svg{width:10px;height:10px;stroke:#fff;stroke-width:2.5;}
+.feat-item-text{line-height:1.5;}
+.feat-item-text span{font-size:11px;color:var(--muted);display:block;margin-top:1px;}
+.feat-new{font-size:10px;background:var(--amber-bg);color:var(--amber);padding:2px 7px;border-radius:10px;font-weight:500;margin-left:6px;vertical-align:middle;}
+
+.includes-row{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);}
+.includes-row:last-child{border:none;}
+.includes-icon{width:36px;height:36px;border-radius:8px;background:var(--cream-dk);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.includes-name{font-size:13px;font-weight:500;color:var(--text);margin-bottom:2px;}
+.includes-desc{font-size:11px;color:var(--muted);line-height:1.5;}
+
+/* RIGHT — checkout card */
+.checkout-card{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:26px;position:sticky;top:76px;}
+.checkout-product{font-size:14px;font-weight:500;color:var(--text);margin-bottom:2px;}
+.checkout-price{font-family:'Playfair Display',serif;font-size:36px;font-weight:700;color:var(--slate);line-height:1;}
+.checkout-period{font-size:11px;color:var(--muted);margin-bottom:18px;}
+.order-row{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);margin-bottom:7px;}
+.order-total{display:flex;justify-content:space-between;font-size:15px;font-weight:600;color:var(--slate);padding-top:10px;border-top:1px solid var(--border);margin-bottom:20px;}
+.order-total .mono{color:var(--amber);}
+.section-divider{border:none;border-top:1px solid var(--border);margin:18px 0;}
+
+/* METHOD TABS */
+.method-label{font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
+.method-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:18px;}
+.method-tab{padding:9px 4px;border:1.5px solid var(--border);border-radius:8px;text-align:center;font-size:11px;font-weight:500;cursor:pointer;transition:all .15s;background:var(--cream);color:var(--muted);}
+.method-tab:hover{border-color:var(--amber);color:var(--amber);}
+.method-tab.active{border-color:var(--amber);background:var(--amber-bg);color:var(--amber);}
+.method-tab .mi{font-size:18px;display:block;margin-bottom:2px;}
+
+/* PAY DETAILS */
+.pay-details{background:var(--cream);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:16px;}
+.pay-details.hidden{display:none;}
+.pay-amount-big{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--amber);}
+.pay-number{font-family:'DM Mono',monospace;font-size:14px;font-weight:500;color:var(--slate);letter-spacing:1px;}
+.pay-name{font-size:12px;color:var(--muted);margin-top:2px;}
+.copy-btn{display:inline-flex;align-items:center;gap:4px;font-size:10px;padding:4px 10px;border:1px solid var(--border);border-radius:6px;cursor:pointer;background:var(--white);color:var(--muted);transition:all .15s;font-family:'DM Sans',sans-serif;}
+.copy-btn:hover{border-color:var(--teal);color:var(--teal);}
+.pay-note{font-size:11px;color:var(--muted);line-height:1.6;margin-top:10px;padding-top:10px;border-top:1px solid var(--border);}
+
+/* FORM */
+.field{margin-bottom:13px;}
+.field label{display:block;font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px;}
+.field input,.field select,.field textarea{width:100%;padding:9px 11px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--text);background:var(--cream);outline:none;transition:border .15s;}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--amber);background:var(--white);}
+.field textarea{resize:none;height:60px;}
+.field-note{font-size:10px;color:var(--muted);margin-top:3px;}
+.err{color:var(--danger);font-size:11px;margin-top:3px;display:none;}
+
+.submit-btn{width:100%;padding:15px;background:var(--amber);color:#fff;font-size:14px;font-weight:500;border:none;border-radius:10px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px;}
+.submit-btn:hover{background:var(--amber-lt);transform:translateY(-1px);box-shadow:0 6px 20px rgba(200,130,74,0.3);}
+.submit-note{font-size:10px;color:var(--muted);text-align:center;margin-top:10px;line-height:1.6;}
+
+/* SUCCESS */
+.success-state{display:none;text-align:center;padding:16px 0;}
+.success-icon{font-size:44px;margin-bottom:12px;}
+.success-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--slate);margin-bottom:8px;}
+.success-sub{font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:16px;}
+.success-ref{font-family:'DM Mono',monospace;font-size:13px;background:var(--cream);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--slate);margin-bottom:16px;}
+.success-ref-l{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:3px;}
+
+/* TRUST BAR */
+.trust-bar{display:flex;flex-wrap:wrap;gap:16px;padding:18px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);margin:24px 0;}
+.trust-item{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);}
+
+/* MOBILE */
+@media(max-width:720px){
+  nav{padding:14px 20px;}
+  .tier-tabs{grid-template-columns:1fr;gap:8px;}
+  .checkout-panel.active{grid-template-columns:1fr;}
+  .checkout-card{position:static;}
+  .hero{padding:40px 20px 32px;}
+  .tier-selector{padding:0 16px 48px;}
+  .feat-section,.checkout-card{padding:20px;}
+}
+</style>
+</head>
+<body>
+
+<div class="promo-bar" role="banner" aria-label="Limited time promotion">
+  🎉 <strong>Launch Promo Price</strong> — Basic ₱299 · Pro ₱599 · Business ₱999 · <strong>Limited time only</strong>
+</div>
+<nav>
+  <div class="nav-logo">Serv<span>ly</span><sup>Expenses</sup></div>
+  <a href="index.html" class="nav-back">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+    Back to product page
+  </a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eyebrow">Choose your plan</div>
+  <h1 class="hero-title serif">One-time payment.<br>Own it forever.</h1>
+  <p class="hero-sub">No subscriptions. No renewals. Pay once — the app and all future updates are yours.</p>
+</div>
+
+<!-- TIER SELECTOR -->
+<div class="tier-selector">
+
+  <!-- TABS -->
+  <div class="tier-tabs" role="tablist" aria-label="Choose a plan">
+    <button class="tier-tab" id="tab-basic" onclick="selectTier('basic')" role="tab" aria-selected="false" aria-controls="panel-basic">
+      <div class="tier-tab-name" style="color:#8a6b70;">Basic</div>
+      <div class="tier-tab-price serif">₱299</div>
+      <div class="tier-tab-period">one-time · no expiry</div>
+      <div class="tier-tab-desc">Solo owner or single location. Log expenses, view reports, export CSV.</div>
+    </button>
+
+    <button class="tier-tab" id="tab-pro" onclick="selectTier('pro')" role="tab" aria-selected="true" aria-controls="panel-pro">
+      <div class="tier-tab-badge">Most popular</div>
+      <div class="tier-tab-name" style="color:#3d6b61;">Professional</div>
+      <div class="tier-tab-price serif">₱599</div>
+      <div class="tier-tab-period">one-time · no expiry</div>
+      <div class="tier-tab-desc">Budget limits, receipt photos, recurring expenses, P&L summary.</div>
+    </button>
+
+    <button class="tier-tab" id="tab-business" onclick="selectTier('business')" role="tab" aria-selected="false" aria-controls="panel-business">
+      <div class="tier-tab-name" style="color:#c8824a;">Business</div>
+      <div class="tier-tab-price serif">₱999</div>
+      <div class="tier-tab-period">one-time · no expiry</div>
+      <div class="tier-tab-desc">Multi-branch, staff logging, approval workflow, Sheets sync, PDF export.</div>
+    </button>
+  </div>
+
+  <!-- ── BASIC PANEL ── -->
+  <div class="checkout-panel" id="panel-basic" role="tabpanel" aria-labelledby="tab-basic">
+    <div class="feat-section">
+      <div class="feat-title serif">Basic Plan</div>
+      <div class="feat-sub">Everything a solo business owner needs to track costs and understand where the money goes — in one offline-capable app.</div>
+
+      <div class="feat-group">
+        <div class="feat-group-label">Core features</div>
+        <div class="feat-list">
+          <div class="feat-item"><div class="feat-check green"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" fill="none"/></svg></div><div class="feat-item-text">Unlimited expense entries<span>Log as many expenses as you need — no cap</span></div></div>
+          <div class="feat-item"><div class="feat-check green"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" fill="none"/></svg></div><div class="feat-item-text">Live dashboard — this month, last month, yearly<span>Stats and trend chart update instantly</span></div></div>
+          <div class="feat-item"><div class="feat-check green"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" fill="none"/></svg></div><div class="feat-item-text">Pie chart — breakdown by category<span>Visual split of where your money goes</span></div></div>
+          <div class="feat-item"><div class="feat-check green"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" fill="none"/></svg></div><div class="feat-item-text">Monthly & yearly reports<span>Select any period — totals, averages, category breakdown</span></div></div>
+          <div class="feat-item"><div class="feat-check green"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" fill="none"/></svg></div><div class="feat-item-text">CSV export & import<span>Export anytime · import from other apps or sheets</span></div></div>
+          <div class="feat-item"><div class="feat-check green"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" fill="none"/></svg></div><div class="feat-item-text">8 preset categories + custom colors<span>Supplies, Utilities, Payroll, Rent, Equipment, Marketing, Maintenance, Other</span></div></div>
+          <div class="feat-item"><div class="feat-check green"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" fill="none"/></svg></div><div class="feat-item-text">Works offline — no internet needed<span>All data stays in your browser · add to home screen</span></div></div>
+        </div>
+      </div>
+
+      <div class="trust-bar">
+        <div class="trust-item">🔒 Data stays on your device</div>
+        <div class="trust-item">📴 Works offline</div>
+        <div class="trust-item">📧 Delivered within 24 hrs</div>
+        <div class="trust-item">🔄 No subscriptions ever</div>
+      </div>
+
+      <div class="feat-group-label">What you receive</div>
+      <div>
+        <div class="includes-row"><div class="includes-icon">📊</div><div><div class="includes-name">Servly_Expenses.html</div><div class="includes-desc">The complete app — open in any browser, no install needed</div></div></div>
+        <div class="includes-row"><div class="includes-icon">📖</div><div><div class="includes-name">Setup Guide (HTML)</div><div class="includes-desc">Step-by-step with screenshots — up and running in 2 minutes</div></div></div>
+        <div class="includes-row"><div class="includes-icon">🚀</div><div><div class="includes-name">GitHub Pages Deploy Guide</div><div class="includes-desc">Free hosting — share with your team via a public URL</div></div></div>
+      </div>
+    </div>
+    <div class="checkout-card" id="card-basic">
+      <div class="checkout-product">Servly Expenses — Basic</div>
+      <div class="checkout-price serif">₱299</div>
+      <div class="checkout-period">one-time · no expiry</div>
+      <div class="order-row"><span>Servly Expenses (Basic)</span><span class="mono">₱299</span></div>
+      <div class="order-row"><span>Setup guide</span><span>Free</span></div>
+      <div class="order-row"><span>Deploy guide</span><span>Free</span></div>
+      <div class="order-total"><span>Total</span><span class="mono">₱299</span></div>
+      <div id="form-basic">
+        <div class="method-label">Payment method</div>
+        <div class="method-tabs">
+          <div class="method-tab active" onclick="selectMethod('basic','gcash',this)"><span class="mi">💚</span>GCash</div>
+          <div class="method-tab" onclick="selectMethod('basic','maya',this)"><span class="mi">🔵</span>Maya</div>
+          <div class="method-tab" onclick="selectMethod('basic','bank',this)"><span class="mi">🏦</span>Bank</div>
+        </div>
+        <div class="pay-details" id="pd-basic-gcash">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+            <div><div style="font-size:10px;color:var(--muted);margin-bottom:3px;">Send exactly</div><div class="pay-amount-big">₱299.00</div></div>
+            <div style="text-align:right;"><div style="font-size:10px;color:var(--muted);margin-bottom:3px;">GCash number</div><div class="pay-number">0919 662 8224</div><div class="pay-name">Marianne M. · Servly</div></div>
+          </div>
+          <button class="copy-btn" onclick="copyNum('09196628224',this)" style="margin-top:10px;">📋 Copy number</button>
+          <div class="pay-note">Send ₱299 then screenshot your confirmation. Enter the reference number below.</div>
+        </div>
+        <div class="pay-details hidden" id="pd-basic-maya">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+            <div><div style="font-size:10px;color:var(--muted);margin-bottom:3px;">Send exactly</div><div class="pay-amount-big">₱299.00</div></div>
+            <div style="text-align:right;"><div style="font-size:10px;color:var(--muted);margin-bottom:3px;">Maya number</div><div class="pay-number">0919 662 8224</div><div class="pay-name">Marianne M. · Servly</div></div>
+          </div>
+          <button class="copy-btn" onclick="copyNum('09196628224',this)" style="margin-top:10px;">📋 Copy number</button>
+          <div class="pay-note">Send ₱299 via Maya then enter your reference number below.</div>
+        </div>
+        <div class="pay-details hidden" id="pd-basic-bank">
+          <div style="margin-bottom:10px;"><div style="font-size:10px;color:var(--muted);margin-bottom:2px;">Bank · Account</div><div class="pay-number">BPI · 2829140848</div><div class="pay-name">Marianne Marave · Servly</div></div>
+          <div class="pay-amount-big" style="margin-bottom:6px;">₱299.00</div>
+          <button class="copy-btn" onclick="copyNum('2829140848',this)">📋 Copy account</button>
+          <div class="pay-note">Transfer ₱299. Enter your bank reference number below.</div>
+        </div>
+        <div class="field"><label>Full name *</label><input type="text" id="b-name" placeholder="Your full name"><div class="err" id="b-err-name">Required</div></div>
+        <div class="field"><label>Email address *</label><input type="email" id="b-email" placeholder="email@example.com"><div class="field-note">App + guide sent here within 24 hours</div><div class="err" id="b-err-email">Enter a valid email</div></div>
+        <div class="field"><label>Business name</label><input type="text" id="b-biz" placeholder="Optional"></div>
+        <div class="field"><label>GCash / payment reference *</label><input type="text" id="b-ref" placeholder="e.g. GC 1234567890"><div class="err" id="b-err-ref">Required</div></div>
+        <div class="field"><label>Notes</label><textarea id="b-notes" placeholder="Questions or special requests…"></textarea></div>
+        <div class="err" id="b-err-form" style="margin-bottom:10px;"></div>
+        <button class="submit-btn" onclick="submitOrder('basic')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          Submit Order — ₱299
+        </button>
+        <div class="submit-note">Payment verified manually · files sent within 24 hrs<br>Questions? <a href="https://m.me/mclubcreo" target="_blank" style="color:var(--teal);">Message us on Facebook</a></div>
+      </div>
+      <div class="success-state" id="success-basic"><div class="success-icon">🎉</div><div class="success-title serif">Order received!</div><div class="success-sub">We'll verify your payment and send Servly Expenses Basic to your email within 24 hours.</div><div class="success-ref"><div class="success-ref-l">Order reference</div><div id="ref-basic">—</div></div><div style="font-size:12px;color:var(--muted);line-height:1.7;">Check spam if you don't see our email.<br><a href="https://m.me/mclubcreo" target="_blank" style="color:var(--teal);">Message us on Facebook</a> if you need faster support.</div></div>
+    </div>
+  </div>
+
+  <!-- ── PRO PANEL ── -->
+  <div class="checkout-panel active" id="panel-pro" role="tabpanel" aria-labelledby="tab-pro">
+    <div class="feat-section">
+      <div class="feat-title serif">Professional Plan</div>
+      <div class="feat-sub">Everything in Basic, plus the tools growing businesses need — budget control, receipt tracking, P&L visibility, and smarter reporting.</div>
+
+      <div class="feat-group">
+        <div class="feat-group-label">Everything in Basic, plus</div>
+        <div class="feat-list">
+          <div class="feat-item"><div class="feat-check amber"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" fill="none"/></svg></div><div class="feat-item-text">Budget limit per category <span class="feat-new">New</span><span>Set a monthly spending cap — red alert when you exceed it</span></div></div>
+          <div class="feat-item"><div class="feat-check amber"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" fill="none"/></svg></div><div class="feat-item-text">Over-budget alerts <span class="feat-new">New</span><span>Visual warning bar and dashboard badge when limit exceeded</span></div></div>
+          <div class="feat-item"><div class="feat-check amber"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" fill="none"/></svg></div><div class="feat-item-text">Receipt photo attachment <span class="feat-new">New</span><span>Snap a photo of any receipt — stored with the expense entry</span></div></div>
+          <div class="feat-item"><div class="feat-check amber"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" fill="none"/></svg></div><div class="feat-item-text">Recurring expense tracker <span class="feat-new">New</span><span>Set monthly recurring costs (rent, utilities) — auto-logs on due date</span></div></div>
+          <div class="feat-item"><div class="feat-check amber"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" fill="none"/></svg></div><div class="feat-item-text">Profit & loss summary <span class="feat-new">New</span><span>Add revenue — see net profit alongside expenses each month</span></div></div>
+          <div class="feat-item"><div class="feat-check amber"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" fill="none"/></svg></div><div class="feat-item-text">Month-over-month comparison <span class="feat-new">New</span><span>Dashboard card showing spend vs same month last year</span></div></div>
+          <div class="feat-item"><div class="feat-check amber"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" fill="none"/></svg></div><div class="feat-item-text">Custom categories (unlimited) <span class="feat-new">New</span><span>Add as many categories as you need with custom colors</span></div></div>
+        </div>
+      </div>
+
+      <div class="trust-bar">
+        <div class="trust-item">🔒 Data stays on your device</div>
+        <div class="trust-item">📴 Works offline</div>
+        <div class="trust-item">📧 Delivered within 24 hrs</div>
+        <div class="trust-item">🔄 No subscriptions ever</div>
+      </div>
+
+      <div class="feat-group-label">What you receive</div>
+      <div>
+        <div class="includes-row"><div class="includes-icon">📊</div><div><div class="includes-name">Servly_Expenses.html</div><div class="includes-desc">Full Pro app — all tiers in one file, unlocked to Pro level</div></div></div>
+        <div class="includes-row"><div class="includes-icon">📖</div><div><div class="includes-name">Setup Guide (HTML)</div><div class="includes-desc">Step-by-step setup including budget limits and recurring expenses</div></div></div>
+        <div class="includes-row"><div class="includes-icon">🚀</div><div><div class="includes-name">GitHub Pages Deploy Guide</div><div class="includes-desc">Share with your team via a free public URL</div></div></div>
+        <div class="includes-row"><div class="includes-icon">📞</div><div><div class="includes-name">14-day email support</div><div class="includes-desc">Setup questions answered within 24 hours</div></div></div>
+      </div>
+    </div>
+    <div class="checkout-card" id="card-pro">
+      <div class="checkout-product">Servly Expenses — Pro</div>
+      <div class="checkout-price serif">₱599</div>
+      <div class="checkout-period">one-time · no expiry</div>
+      <div class="order-row"><span>Servly Expenses (Pro)</span><span class="mono">₱599</span></div>
+      <div class="order-row"><span>Setup guide</span><span>Free</span></div>
+      <div class="order-row"><span>14-day email support</span><span>Free</span></div>
+      <div class="order-total"><span>Total</span><span class="mono">₱599</span></div>
+      <div id="form-pro">
+        <div class="method-label">Payment method</div>
+        <div class="method-tabs">
+          <div class="method-tab active" onclick="selectMethod('pro','gcash',this)"><span class="mi">💚</span>GCash</div>
+          <div class="method-tab" onclick="selectMethod('pro','maya',this)"><span class="mi">🔵</span>Maya</div>
+          <div class="method-tab" onclick="selectMethod('pro','bank',this)"><span class="mi">🏦</span>Bank</div>
+        </div>
+        <div class="pay-details" id="pd-pro-gcash">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+            <div><div style="font-size:10px;color:var(--muted);margin-bottom:3px;">Send exactly</div><div class="pay-amount-big">₱599.00</div></div>
+            <div style="text-align:right;"><div style="font-size:10px;color:var(--muted);margin-bottom:3px;">GCash number</div><div class="pay-number">0919 662 8224</div><div class="pay-name">Marianne M. · Servly</div></div>
+          </div>
+          <button class="copy-btn" onclick="copyNum('09196628224',this)" style="margin-top:10px;">📋 Copy number</button>
+          <div class="pay-note">Send ₱599 then screenshot your confirmation. Enter the reference number below.</div>
+        </div>
+        <div class="pay-details hidden" id="pd-pro-maya">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+            <div><div style="font-size:10px;color:var(--muted);margin-bottom:3px;">Send exactly</div><div class="pay-amount-big">₱599.00</div></div>
+            <div style="text-align:right;"><div style="font-size:10px;color:var(--muted);margin-bottom:3px;">Maya number</div><div class="pay-number">0919 662 8224</div><div class="pay-name">Marianne M. · Servly</div></div>
+          </div>
+          <button class="copy-btn" onclick="copyNum('09196628224',this)" style="margin-top:10px;">📋 Copy number</button>
+          <div class="pay-note">Send ₱599 via Maya then enter your reference number below.</div>
+        </div>
+        <div class="pay-details hidden" id="pd-pro-bank">
+          <div style="margin-bottom:10px;"><div style="font-size:10px;color:var(--muted);margin-bottom:2px;">Bank · Account</div><div class="pay-number">BPI · 2829140848</div><div class="pay-name">Marianne Marave · Servly</div></div>
+          <div class="pay-amount-big" style="margin-bottom:6px;">₱599.00</div>
+          <button class="copy-btn" onclick="copyNum('2829140848',this)">📋 Copy account</button>
+          <div class="pay-note">Transfer ₱599. Enter your bank reference number below.</div>
+        </div>
+        <div class="field"><label>Full name *</label><input type="text" id="p-name" placeholder="Your full name"><div class="err" id="p-err-name">Required</div></div>
+        <div class="field"><label>Email address *</label><input type="email" id="p-email" placeholder="email@example.com"><div class="field-note">App + guide sent here within 24 hours</div><div class="err" id="p-err-email">Enter a valid email</div></div>
+        <div class="field"><label>Business name</label><input type="text" id="p-biz" placeholder="Optional"></div>
+        <div class="field"><label>GCash / payment reference *</label><input type="text" id="p-ref" placeholder="e.g. GC 1234567890"><div class="err" id="p-err-ref">Required</div></div>
+        <div class="field"><label>Notes</label><textarea id="p-notes" placeholder="Questions or special requests…"></textarea></div>
+        <div class="err" id="p-err-form" style="margin-bottom:10px;"></div>
+        <button class="submit-btn" onclick="submitOrder('pro')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          Submit Order — ₱599
+        </button>
+        <div class="submit-note">Payment verified manually · files sent within 24 hrs<br>Questions? <a href="https://m.me/mclubcreo" target="_blank" style="color:var(--teal);">Message us on Facebook</a></div>
+      </div>
+      <div class="success-state" id="success-pro"><div class="success-icon">🎉</div><div class="success-title serif">Order received!</div><div class="success-sub">We'll verify your payment and send Servly Expenses Pro to your email within 24 hours.</div><div class="success-ref"><div class="success-ref-l">Order reference</div><div id="ref-pro">—</div></div><div style="font-size:12px;color:var(--muted);line-height:1.7;">Check spam if you don't see our email.<br><a href="https://m.me/mclubcreo" target="_blank" style="color:var(--teal);">Message us on Facebook</a> for faster support.</div></div>
+    </div>
+  </div>
+
+  <!-- ── BUSINESS PANEL ── -->
+  <div class="checkout-panel" id="panel-business" role="tabpanel" aria-labelledby="tab-business">
+    <div class="feat-section">
+      <div class="feat-title serif">Business Plan</div>
+      <div class="feat-sub">The complete multi-location expense OS for growing businesses with teams, branches, and an accountant to report to.</div>
+
+      <div class="feat-group">
+        <div class="feat-group-label">Everything in Pro, plus</div>
+        <div class="feat-list">
+          <div class="feat-item"><div class="feat-check amber"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" fill="none"/></svg></div><div class="feat-item-text">Multi-branch / location view <span class="feat-new">New</span><span>Add unlimited branches — each tracks its own expenses separately</span></div></div>
+          <div class="feat-item"><div class="feat-check amber"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" fill="none"/></svg></div><div class="feat-item-text">Staff expense logging <span class="feat-new">New</span><span>Add staff members — assign expenses to the person who made them</span></div></div>
+          <div class="feat-item"><div class="feat-check amber"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" fill="none"/></svg></div><div class="feat-item-text">Approval workflow <span class="feat-new">New</span><span>Staff submit expenses as pending — manager approves or rejects</span></div></div>
+          <div class="feat-item"><div class="feat-check amber"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" fill="none"/></svg></div><div class="feat-item-text">Google Sheets sync <span class="feat-new">New</span><span>One-click sync to your Google Sheet via Apps Script</span></div></div>
+          <div class="feat-item"><div class="feat-check amber"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" fill="none"/></svg></div><div class="feat-item-text">PDF report export <span class="feat-new">New</span><span>Print-ready PDF with your branding, category breakdown, full table</span></div></div>
+          <div class="feat-item"><div class="feat-check amber"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" fill="none"/></svg></div><div class="feat-item-text">Custom branding + logo color <span class="feat-new">New</span><span>Your business name and color on every report and screen</span></div></div>
+          <div class="feat-item"><div class="feat-check amber"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" fill="none"/></svg></div><div class="feat-item-text">30-day priority email support <span class="feat-new">New</span><span>Setup, Google Sheets config, and training questions — we help</span></div></div>
+        </div>
+      </div>
+
+      <div class="trust-bar">
+        <div class="trust-item">🔒 Data stays on your device</div>
+        <div class="trust-item">📴 Works offline</div>
+        <div class="trust-item">📧 Delivered within 24 hrs</div>
+        <div class="trust-item">📞 30-day support included</div>
+      </div>
+
+      <div class="feat-group-label">What you receive</div>
+      <div>
+        <div class="includes-row"><div class="includes-icon">📊</div><div><div class="includes-name">Servly_Expenses.html</div><div class="includes-desc">Full Business app — all features unlocked</div></div></div>
+        <div class="includes-row"><div class="includes-icon">⚙️</div><div><div class="includes-name">Servly_Expenses_GAS.gs</div><div class="includes-desc">Google Apps Script file for Sheets sync — paste and deploy in 3 minutes</div></div></div>
+        <div class="includes-row"><div class="includes-icon">📖</div><div><div class="includes-name">Setup Guide (HTML)</div><div class="includes-desc">Full setup including Sheets sync, branches, staff, and approval workflow</div></div></div>
+        <div class="includes-row"><div class="includes-icon">🚀</div><div><div class="includes-name">GitHub Pages Deploy Guide</div><div class="includes-desc">Host for your team on a free public URL</div></div></div>
+        <div class="includes-row"><div class="includes-icon">📞</div><div><div class="includes-name">30-day priority email support</div><div class="includes-desc">We help you configure Sheets sync, branches, and staff setup</div></div></div>
+      </div>
+    </div>
+    <div class="checkout-card" id="card-business">
+      <div class="checkout-product">Servly Expenses — Business</div>
+      <div class="checkout-price serif">₱999</div>
+      <div class="checkout-period">one-time · no expiry · installment available</div>
+      <div class="order-row"><span>Servly Expenses (Business)</span><span class="mono">₱999</span></div>
+      <div class="order-row"><span>Apps Script GAS file</span><span>Free</span></div>
+      <div class="order-row"><span>Setup guide</span><span>Free</span></div>
+      <div class="order-row"><span>30-day priority support</span><span>Free</span></div>
+      <div class="order-total"><span>Total</span><span class="mono">₱999</span></div>
+      <div id="form-business">
+        <div class="method-label">Payment method</div>
+        <div class="method-tabs">
+          <div class="method-tab active" onclick="selectMethod('business','gcash',this)"><span class="mi">💚</span>GCash</div>
+          <div class="method-tab" onclick="selectMethod('business','maya',this)"><span class="mi">🔵</span>Maya</div>
+          <div class="method-tab" onclick="selectMethod('business','bank',this)"><span class="mi">🏦</span>Bank</div>
+        </div>
+        <div class="pay-details" id="pd-business-gcash">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+            <div><div style="font-size:10px;color:var(--muted);margin-bottom:3px;">Send exactly</div><div class="pay-amount-big">₱999.00</div></div>
+            <div style="text-align:right;"><div style="font-size:10px;color:var(--muted);margin-bottom:3px;">GCash number</div><div class="pay-number">0919 662 8224</div><div class="pay-name">Marianne M. · Servly</div></div>
+          </div>
+          <button class="copy-btn" onclick="copyNum('09196628224',this)" style="margin-top:10px;">📋 Copy number</button>
+          <div class="pay-note">Send ₱999 then enter your reference number below. Installment available — message us first.</div>
+        </div>
+        <div class="pay-details hidden" id="pd-business-maya">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+            <div><div style="font-size:10px;color:var(--muted);margin-bottom:3px;">Send exactly</div><div class="pay-amount-big">₱999.00</div></div>
+            <div style="text-align:right;"><div style="font-size:10px;color:var(--muted);margin-bottom:3px;">Maya number</div><div class="pay-number">0919 662 8224</div><div class="pay-name">Marianne M. · Servly</div></div>
+          </div>
+          <button class="copy-btn" onclick="copyNum('09196628224',this)" style="margin-top:10px;">📋 Copy number</button>
+          <div class="pay-note">Send ₱999 via Maya then enter your reference number below.</div>
+        </div>
+        <div class="pay-details hidden" id="pd-business-bank">
+          <div style="margin-bottom:10px;"><div style="font-size:10px;color:var(--muted);margin-bottom:2px;">Bank · Account</div><div class="pay-number">BPI · 2829140848</div><div class="pay-name">Marianne Marave · Servly</div></div>
+          <div class="pay-amount-big" style="margin-bottom:6px;">₱999.00</div>
+          <button class="copy-btn" onclick="copyNum('2829140848',this)">📋 Copy account</button>
+          <div class="pay-note">Transfer ₱999. Installment available — message us to arrange. Enter reference number below.</div>
+        </div>
+        <div class="field"><label>Full name *</label><input type="text" id="bus-name" placeholder="Your full name"><div class="err" id="bus-err-name">Required</div></div>
+        <div class="field"><label>Email address *</label><input type="email" id="bus-email" placeholder="email@example.com"><div class="field-note">App, GAS file + guide sent here within 24 hours</div><div class="err" id="bus-err-email">Enter a valid email</div></div>
+        <div class="field"><label>Business name *</label><input type="text" id="bus-biz" placeholder="e.g. Lumière Clinic — Main Branch"><div class="err" id="bus-err-biz">Required for Business plan</div></div>
+        <div class="field"><label>Number of branches / locations</label><input type="number" id="bus-branches" placeholder="e.g. 2" min="1"><div class="field-note">Helps us prepare your setup guide</div></div>
+        <div class="field"><label>GCash / payment reference *</label><input type="text" id="bus-ref" placeholder="e.g. GC 1234567890"><div class="err" id="bus-err-ref">Required</div></div>
+        <div class="field"><label>Notes / questions</label><textarea id="bus-notes" placeholder="Tell us about your setup — branches, number of staff, any special requirements…"></textarea></div>
+        <div class="err" id="bus-err-form" style="margin-bottom:10px;"></div>
+        <button class="submit-btn" onclick="submitOrder('business')" style="background:var(--amber);">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          Submit Order — ₱999
+        </button>
+        <div class="submit-note">Installment available — <a href="https://m.me/mclubcreo" target="_blank" style="color:var(--teal);">message us to arrange</a><br>Files sent within 24 hrs of payment confirmation</div>
+      </div>
+      <div class="success-state" id="success-business"><div class="success-icon">🎉</div><div class="success-title serif">Order received!</div><div class="success-sub">We'll verify your payment and send your complete Business package — app, GAS file, and setup guide — within 24 hours.</div><div class="success-ref"><div class="success-ref-l">Order reference</div><div id="ref-business">—</div></div><div style="font-size:12px;color:var(--muted);line-height:1.7;">Your 30-day support starts from delivery day.<br><a href="https://m.me/mclubcreo" target="_blank" style="color:var(--teal);">Message us on Facebook</a> for faster support.</div></div>
+    </div>
+  </div>
+
+  <!-- COMPARE FOOTNOTE -->
+  <div style="text-align:center;margin-top:40px;padding:24px;background:var(--white);border:1px solid var(--border);border-radius:12px;">
+    <div style="font-size:12px;color:var(--muted);margin-bottom:12px;">Not sure which plan? <a href="index.html#pricing" style="color:var(--teal);">Compare all plans →</a></div>
+    <div style="font-size:12px;color:var(--muted);">Can upgrade later by paying the difference · <a href="https://m.me/mclubcreo" target="_blank" style="color:var(--teal);">Message us with questions</a></div>
+  </div>
+
+</div><!-- /tier-selector -->
+
+<script>
+// ── TIER SELECTION ────────────────────────────────────────────
+var curTiers = { basic:'gcash', pro:'gcash', business:'gcash' };
+
+function selectTier(tier){
+  document.querySelectorAll('.tier-tab').forEach(function(t){ t.classList.remove('active'); t.setAttribute('aria-selected','false'); });
+  document.querySelectorAll('.checkout-panel').forEach(function(p){ p.classList.remove('active'); });
+  document.getElementById('tab-'+tier).classList.add('active');
+  document.getElementById('tab-'+tier).setAttribute('aria-selected','true');
+  document.getElementById('panel-'+tier).classList.add('active');
+  // Scroll checkout card into view on mobile
+  if(window.innerWidth < 720){
+    setTimeout(function(){ document.getElementById('card-'+tier).scrollIntoView({behavior:'smooth',block:'start'}); },100);
+  }
+}
+
+// ── PAYMENT METHOD ────────────────────────────────────────────
+function selectMethod(tier, method, el){
+  curTiers[tier] = method;
+  var card = document.getElementById('card-'+tier);
+  card.querySelectorAll('.method-tab').forEach(function(t){ t.classList.remove('active'); });
+  el.classList.add('active');
+  ['gcash','maya','bank'].forEach(function(m){
+    var pd = document.getElementById('pd-'+tier+'-'+m);
+    if(pd) pd.classList.toggle('hidden', m!==method);
+  });
+}
+
+// ── COPY ─────────────────────────────────────────────────────
+function copyNum(num, btn){
+  navigator.clipboard.writeText(num).then(function(){
+    var orig = btn.innerHTML;
+    btn.textContent = '✓ Copied!';
+    setTimeout(function(){ btn.innerHTML = orig; }, 2000);
+  }).catch(function(){ prompt('Copy this:', num); });
+}
+
+// ── ORDER SUBMISSION ─────────────────────────────────────────
+var prefixes = { basic:'b', pro:'p', business:'bus' };
+
+function submitOrder(tier){
+  var prefix = prefixes[tier];
+  var name    = (document.getElementById(prefix+'-name')||{}).value||'';
+  var email   = (document.getElementById(prefix+'-email')||{}).value||'';
+  var biz     = (document.getElementById(prefix+'-biz')||{}).value||'';
+  var ref     = (document.getElementById(prefix+'-ref')||{}).value||'';
+  var notes   = (document.getElementById(prefix+'-notes')||{}).value||'';
+  var branches= (document.getElementById(prefix+'-branches')||{}).value||'';
+  var errForm = document.getElementById(prefix+'-err-form');
+
+  // Validation
+  var valid = true;
+  function setErr(id, show, msg){ var el=document.getElementById(id); if(!el)return; el.style.display=show?'block':'none'; if(msg)el.textContent=msg; }
+
+  if(!name.trim()){ setErr(prefix+'-err-name',true,'Required'); valid=false; } else setErr(prefix+'-err-name',false);
+  if(!email.trim()||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ setErr(prefix+'-err-email',true,'Enter a valid email'); valid=false; } else setErr(prefix+'-err-email',false);
+  if(!ref.trim()){ setErr(prefix+'-err-ref',true,'Required'); valid=false; } else setErr(prefix+'-err-ref',false);
+  if(tier==='business' && !biz.trim()){ setErr('bus-err-biz',true,'Required for Business plan'); valid=false; } else if(tier==='business') setErr('bus-err-biz',false);
+
+  if(!valid){ if(errForm){ errForm.textContent='Please fill in all required fields.'; errForm.style.display='block'; } return; }
+  if(errForm) errForm.style.display='none';
+
+  var amounts = { basic:299, pro:599, business:999 };
+  var orderRef = 'SRV-EXP-'+(tier==='basic'?'B':tier==='pro'?'P':'BIZ')+'-'+Date.now().toString().slice(-7);
+
+  var order = {
+    action: 'newOrder',
+    ref: orderRef, tier, amount: amounts[tier],
+    name: name.trim(), email: email.trim(),
+    biz: biz.trim(), branches,
+    payment: curTiers[tier], paymentRef: ref.trim(),
+    notes: notes.trim(), date: new Date().toISOString()
+  };
+
+  // Save to localStorage (always works, even if GAS is offline)
+  var saved = JSON.parse(localStorage.getItem('srv_orders')||'[]');
+  saved.push(order);
+  localStorage.setItem('srv_orders', JSON.stringify(saved));
+
+  // Show success immediately — don't make them wait for GAS
+  document.getElementById('form-'+tier).style.display = 'none';
+  document.getElementById('ref-'+tier).textContent = orderRef;
+  document.getElementById('success-'+tier).style.display = 'block';
+  document.getElementById('card-'+tier).scrollIntoView({behavior:'smooth',block:'start'});
+
+  // POST to GAS — logs order, emails YOU, sends files to CLIENT
+  if(GAS_URL){
+    fetch(GAS_URL, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify(order)
+    }).catch(function(err){
+      console.warn('GAS post failed (order saved locally):', err);
+    });
+  }
+}
+
+// ============================================================
+// STEP 5 — Paste your Apps Script URL here after deploying
+// This makes orders email you AND sends files to clients
+// automatically. See setup guide for instructions.
+// ============================================================
+var GAS_URL = ''; // ← PASTE YOUR GAS WEB APP URL HERE
+
+// ── INIT — read ?plan= from landing page, default to pro ────────
+(function(){
+  var plan = new URLSearchParams(window.location.search).get('plan');
+  var valid = ['basic','pro','business'];
+  selectTier(valid.includes(plan) ? plan : 'pro');
+})();
+</script>
+</body>
+</html>

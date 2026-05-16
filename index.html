@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Servly Expenses — Track Every Peso. Report Every Month.</title>
+<meta name="description" content="A standalone expense tracker and report app for Filipino service businesses. One-time payment. No subscriptions. Works offline.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;0,900;1,400;1,700&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --slate:#1e2d2d;--teal:#3d6b61;--teal-lt:#51897d;
+  --amber:#c8824a;--amber-lt:#d79068;--amber-bg:rgba(200,130,74,.08);
+  --cream:#f5f0e8;--cream-dk:#ede6d8;--cream3:#e8dfd3;
+  --white:#fff;--text:#1a2626;--muted:#6b8080;
+  --border:rgba(61,107,97,.18);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:1000;opacity:.6;}
+.serif{font-family:'Playfair Display',serif;}
+.mono{font-family:'DM Mono',monospace;}
+
+/* PROMO BANNER */
+.promo-bar{background:var(--amber);color:#fff;text-align:center;padding:10px 20px;font-size:13px;font-weight:500;letter-spacing:.3px;position:relative;z-index:101;}
+.promo-bar strong{font-weight:700;}
+.promo-bar .og{text-decoration:line-through;opacity:.7;margin-left:4px;font-weight:400;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:18px 48px;background:rgba(245,240,232,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);transition:box-shadow .3s;}
+.nav-logo{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--slate);letter-spacing:.5px;}
+.nav-logo span{color:var(--amber);}
+.nav-logo sup{font-family:'DM Sans',sans-serif;font-size:9px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:var(--muted);vertical-align:super;margin-left:3px;}
+.nav-links{display:flex;align-items:center;gap:32px;list-style:none;}
+.nav-links a{font-size:13px;color:var(--muted);text-decoration:none;font-weight:500;transition:color .2s;}
+.nav-links a:hover{color:var(--teal);}
+.nav-cta{background:var(--amber)!important;color:#fff!important;padding:10px 22px;border-radius:6px;font-weight:500;}
+.nav-cta:hover{background:var(--amber-lt)!important;color:#fff!important;}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:140px 48px 80px;text-align:center;position:relative;overflow:hidden;}
+.hero::after{content:'';position:absolute;inset:0;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 70% 60% at 50% 50%,black 30%,transparent 100%);-webkit-mask-image:radial-gradient(ellipse 70% 60% at 50% 50%,black 30%,transparent 100%);opacity:.5;}
+.hero-inner{position:relative;z-index:1;max-width:800px;}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:500;letter-spacing:3px;text-transform:uppercase;color:var(--amber);background:var(--amber-bg);border:1px solid rgba(200,130,74,.25);padding:7px 16px;border-radius:20px;margin-bottom:36px;opacity:0;animation:fadeUp .6s ease .1s forwards;}
+.eyebrow::before{content:'';width:6px;height:6px;background:var(--amber);border-radius:50%;}
+h1{font-family:'Playfair Display',serif;font-size:clamp(44px,7vw,80px);font-weight:900;line-height:1.05;color:var(--slate);margin-bottom:24px;opacity:0;animation:fadeUp .7s ease .2s forwards;}
+h1 em{font-style:italic;color:var(--amber);}
+h1 .line2{display:block;color:var(--teal);}
+.hero-sub{font-size:18px;line-height:1.8;color:var(--muted);max-width:560px;margin:0 auto 48px;font-weight:300;opacity:0;animation:fadeUp .7s ease .35s forwards;}
+.hero-btns{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;opacity:0;animation:fadeUp .7s ease .5s forwards;}
+.btn-main{display:inline-flex;align-items:center;gap:10px;background:var(--amber);color:#fff;font-size:15px;font-weight:500;padding:16px 32px;border-radius:8px;text-decoration:none;transition:all .2s;}
+.btn-main:hover{background:var(--amber-lt);transform:translateY(-2px);box-shadow:0 8px 24px rgba(200,130,74,.35);}
+.btn-main svg{width:18px;height:18px;flex-shrink:0;}
+.btn-ghost{display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:500;color:var(--teal);text-decoration:none;padding:16px 24px;border-radius:8px;border:1px solid rgba(61,107,97,.3);transition:all .2s;}
+.btn-ghost:hover{background:rgba(61,107,97,.06);border-color:var(--teal);}
+.proof-row{margin-top:64px;display:flex;align-items:center;justify-content:center;gap:32px;opacity:0;animation:fadeUp .7s ease .65s forwards;}
+.proof-item{text-align:center;}
+.proof-num{font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:var(--slate);}
+.proof-lbl{font-size:11px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-top:2px;}
+.proof-div{width:1px;height:40px;background:var(--border);}
+
+/* MARQUEE */
+.marquee-wrap{background:var(--slate);padding:15px 0;overflow:hidden;white-space:nowrap;}
+.marquee-track{display:inline-flex;animation:marquee 28s linear infinite;}
+.m-item{display:inline-flex;align-items:center;gap:14px;font-size:11px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:rgba(245,240,232,.4);padding:0 28px;}
+.m-item span{color:var(--amber-lt);font-size:13px;}
+@keyframes marquee{to{transform:translateX(-50%);}}
+
+/* SECTIONS */
+section{padding:96px 48px;}
+.s-lbl{font-size:11px;font-weight:500;letter-spacing:3px;text-transform:uppercase;color:var(--teal);margin-bottom:14px;}
+.s-title{font-family:'Playfair Display',serif;font-size:clamp(30px,4vw,46px);font-weight:700;line-height:1.15;color:var(--slate);margin-bottom:16px;}
+.s-sub{font-size:16px;line-height:1.8;color:var(--muted);max-width:520px;font-weight:300;}
+
+/* FEATURES */
+.feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-top:52px;border:1px solid var(--border);border-radius:16px;overflow:hidden;}
+.feat{background:var(--white);padding:28px 26px;transition:background .2s;}
+.feat:hover{background:var(--cream-dk);}
+.feat-ico{width:40px;height:40px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:19px;margin-bottom:16px;flex-shrink:0;}
+.fi-a{background:var(--amber);}
+.fi-t{background:var(--teal);}
+.fi-s{background:var(--slate);}
+.feat-name{font-family:'Playfair Display',serif;font-size:16px;font-weight:600;color:var(--slate);margin-bottom:7px;}
+.feat-desc{font-size:12px;line-height:1.7;color:var(--muted);}
+.feat-tag{display:inline-block;margin-top:11px;font-size:9px;font-family:'DM Mono',monospace;padding:2px 8px;border-radius:4px;}
+.tag-all{color:var(--teal);background:rgba(61,107,97,.08);}
+.tag-pro{color:var(--amber);background:var(--amber-bg);}
+.tag-biz{color:var(--amber-lt);background:rgba(200,130,74,.12);}
+
+/* WHO */
+.who-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:44px;}
+.who{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:18px 16px;text-align:center;transition:all .2s;}
+.who:hover{border-color:var(--amber);transform:translateY(-3px);box-shadow:0 8px 24px rgba(200,130,74,.1);}
+.who-ico{font-size:26px;margin-bottom:9px;}
+.who-name{font-size:13px;font-weight:500;color:var(--slate);margin-bottom:5px;}
+.who-desc{font-size:11px;color:var(--muted);line-height:1.6;}
+
+/* COMPARISON */
+.comp-sec{background:var(--slate);}
+.comp-sec .s-title{color:var(--cream);}
+.comp-sec .s-sub{color:rgba(245,240,232,.6);}
+.comp-sec .s-lbl{color:var(--amber-lt);}
+.comp-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:44px;}
+.comp{border-radius:14px;padding:28px;}
+.comp-them{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);}
+.comp-us{background:var(--teal);border:1px solid rgba(255,255,255,.15);}
+.comp-ttl{font-size:11px;font-weight:500;letter-spacing:2px;text-transform:uppercase;margin-bottom:20px;opacity:.6;}
+.comp-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.08);font-size:14px;}
+.comp-row:last-child{border:none;}
+
+/* PRICING */
+.price-sec{background:var(--cream-dk);}
+.price-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:52px;}
+.p-card{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:30px 24px;position:relative;transition:all .2s;}
+.p-card:hover{transform:translateY(-4px);box-shadow:0 16px 48px rgba(30,45,45,.1);}
+.p-card.hot{border:2px solid var(--amber);background:var(--slate);}
+.p-popular{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--amber);color:#fff;font-size:10px;font-weight:600;padding:4px 14px;border-radius:20px;white-space:nowrap;letter-spacing:.5px;}
+/* light card */
+.p-card:not(.hot) .p-tier{font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:7px;}
+.p-card:not(.hot) .p-price{font-family:'Playfair Display',serif;font-size:40px;font-weight:700;color:var(--slate);line-height:1;margin-bottom:4px;}
+.p-card:not(.hot) .p-period{font-size:11px;color:var(--muted);margin-bottom:12px;}
+.p-card:not(.hot) .p-desc{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:20px;}
+.p-card:not(.hot) hr{border:none;border-top:1px solid var(--border);margin-bottom:16px;}
+.p-card:not(.hot) .p-feat{display:flex;align-items:flex-start;gap:9px;font-size:13px;color:var(--text);margin-bottom:8px;line-height:1.5;}
+.p-card:not(.hot) .p-feat-ico{color:var(--teal);flex-shrink:0;margin-top:1px;}
+/* dark card */
+.p-card.hot .p-tier{font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:rgba(245,240,232,.5);margin-bottom:7px;}
+.p-card.hot .p-price{font-family:'Playfair Display',serif;font-size:40px;font-weight:700;color:var(--cream);line-height:1;margin-bottom:4px;}
+.p-card.hot .p-period{font-size:11px;color:rgba(245,240,232,.4);margin-bottom:12px;}
+.p-card.hot .p-desc{font-size:13px;color:rgba(245,240,232,.5);line-height:1.6;margin-bottom:20px;}
+.p-card.hot hr{border:none;border-top:1px solid rgba(255,255,255,.1);margin-bottom:16px;}
+.p-card.hot .p-feat{display:flex;align-items:flex-start;gap:9px;font-size:13px;color:rgba(245,240,232,.85);margin-bottom:8px;line-height:1.5;}
+.p-card.hot .p-feat-ico{color:#f4d0a0;flex-shrink:0;margin-top:1px;}
+/* buttons */
+.p-btn{display:block;text-align:center;padding:13px;border-radius:8px;font-size:14px;font-weight:500;text-decoration:none;margin-top:22px;transition:all .2s;}
+.p-btn-outline{border:1.5px solid var(--border);color:var(--teal);}
+.p-btn-outline:hover{background:var(--cream-dk);border-color:var(--teal);}
+.p-btn-amber{background:var(--amber);color:#fff;border:none;}
+.p-btn-amber:hover{background:var(--amber-lt);}
+.p-btn-teal{background:var(--teal-lt);color:#fff;border:none;}
+.p-btn-teal:hover{background:var(--teal);}
+.upgrade-note{text-align:center;margin-top:18px;font-size:12px;color:var(--muted);}
+.upgrade-note a{color:var(--teal);}
+
+/* STEPS */
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:52px;position:relative;}
+.steps::before{content:'';position:absolute;top:27px;left:12.5%;right:12.5%;height:1px;background:linear-gradient(to right,var(--border),var(--amber),var(--border));}
+.step{padding:0 16px;text-align:center;}
+.step-n{width:54px;height:54px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:20px;font-weight:700;margin:0 auto 18px;position:relative;z-index:1;}
+.sn1{background:var(--slate);color:var(--cream);}
+.sn2{background:var(--teal);color:#fff;}
+.sn3{background:var(--teal-lt);color:#fff;}
+.sn4{background:var(--amber);color:#fff;}
+.step-ttl{font-size:14px;font-weight:500;color:var(--slate);margin-bottom:7px;}
+.step-desc{font-size:12px;line-height:1.7;color:var(--muted);}
+
+/* FAQ */
+.faq-wrap{max-width:680px;margin:52px auto 0;}
+.faq-item{border-bottom:1px solid var(--border);}
+.faq-q{width:100%;display:flex;align-items:center;justify-content:space-between;padding:20px 0;font-size:15px;font-weight:500;color:var(--slate);background:none;border:none;cursor:pointer;text-align:left;gap:18px;font-family:'DM Sans',sans-serif;}
+.faq-icon{flex-shrink:0;font-size:20px;color:var(--amber);transition:transform .2s;}
+.faq-a{font-size:14px;line-height:1.8;color:var(--muted);padding-bottom:18px;display:none;}
+.faq-item.open .faq-a{display:block;}
+.faq-item.open .faq-icon{transform:rotate(45deg);}
+
+/* CTA */
+.cta-sec{background:var(--slate);text-align:center;padding:96px 48px;position:relative;overflow:hidden;}
+.cta-sec::before{content:'EXPENSES';position:absolute;font-family:'Playfair Display',serif;font-size:180px;font-weight:900;color:rgba(255,255,255,.025);top:50%;left:50%;transform:translate(-50%,-50%);white-space:nowrap;pointer-events:none;}
+.cta-sec .s-lbl{color:var(--amber-lt);}
+.cta-sec .s-title{color:var(--cream);max-width:520px;margin:0 auto 16px;}
+.cta-sec .s-sub{color:rgba(245,240,232,.5);max-width:440px;margin:0 auto 40px;}
+
+/* FOOTER */
+footer{background:#111c1c;padding:32px 48px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;}
+.f-logo{font-family:'Playfair Display',serif;font-size:17px;color:rgba(245,240,232,.5);}
+.f-logo span{color:var(--amber);}
+.f-links{display:flex;gap:22px;}
+.f-links a{font-size:12px;color:rgba(245,240,232,.3);text-decoration:none;transition:color .2s;}
+.f-links a:hover{color:var(--amber-lt);}
+.f-copy{font-size:11px;color:rgba(245,240,232,.2);}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+.reveal{opacity:0;transform:translateY(22px);transition:all .6s ease;}
+.reveal.visible{opacity:1;transform:translateY(0);}
+
+/* MOBILE */
+@media(max-width:768px){
+  nav{padding:14px 20px;}
+  .nav-links{display:none;}
+  .hero{padding:100px 20px 60px;}
+  section{padding:60px 20px;}
+  .feat-grid,.price-grid,.comp-grid{grid-template-columns:1fr;}
+  .who-grid{grid-template-columns:1fr 1fr;}
+  .steps{grid-template-columns:1fr 1fr;gap:28px;}
+  .steps::before{display:none;}
+  .proof-div{display:none;}
+  .proof-row{gap:18px;}
+  footer{flex-direction:column;text-align:center;padding:24px 20px;}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<div class="promo-bar" role="banner" aria-label="Limited time promotion">
+  🎉 <strong>Launch Promo — Limited Time!</strong>
+  &nbsp; Basic <strong>₱299</strong><span class="og">₱299</span>
+  &nbsp;·&nbsp; Pro <strong>₱599</strong><span class="og">₱599</span>
+  &nbsp;·&nbsp; Business <strong>₱999</strong><span class="og">₱999</span>
+  &nbsp;·&nbsp; <a href="sales.html" style="color:#fff;font-weight:700;text-decoration:underline;">Buy now →</a>
+</div>
+<nav id="nav">
+  <div class="nav-logo">Serv<span>ly</span><sup>Expenses</sup></div>
+  <ul class="nav-links">
+    <li><a href="#features">Features</a></li>
+    <li><a href="#who">Who it's for</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="#faq">FAQ</a></li>
+    <li><a href="sales.html" class="nav-cta">Buy Now</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="eyebrow">For Filipino service businesses</div>
+    <h1>Track every peso.<br>Report <em>every</em><span class="line2">month.</span></h1>
+    <p class="hero-sub">A dedicated expense tracker and monthly report app. No subscriptions. No spreadsheet chaos. Works offline. One-time payment — own it forever.</p>
+    <div class="hero-btns">
+      <a href="sales.html" class="btn-main">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        See Plans &amp; Pricing
+      </a>
+      <a href="#features" class="btn-ghost">See all features →</a>
+    </div>
+    <div class="proof-row">
+      <div class="proof-item"><div class="proof-num serif">₱0</div><div class="proof-lbl">Monthly fee</div></div>
+      <div class="proof-div"></div>
+      <div class="proof-item"><div class="proof-num serif">8+</div><div class="proof-lbl">Categories</div></div>
+      <div class="proof-div"></div>
+      <div class="proof-item"><div class="proof-num serif">100%</div><div class="proof-lbl">Offline capable</div></div>
+      <div class="proof-div"></div>
+      <div class="proof-item"><div class="proof-num serif">∞</div><div class="proof-lbl">No entry limit</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-wrap">
+  <div class="marquee-track">
+    <span class="m-item">Dashboard <span>·</span></span>
+    <span class="m-item">Pie Chart <span>·</span></span>
+    <span class="m-item">Monthly Reports <span>·</span></span>
+    <span class="m-item">CSV Export &amp; Import <span>·</span></span>
+    <span class="m-item">Budget Limits <span>·</span></span>
+    <span class="m-item">Receipt Photos <span>·</span></span>
+    <span class="m-item">Recurring Expenses <span>·</span></span>
+    <span class="m-item">P&amp;L Summary <span>·</span></span>
+    <span class="m-item">Multi-Branch <span>·</span></span>
+    <span class="m-item">Google Sheets Sync <span>·</span></span>
+    <span class="m-item">PDF Export <span>·</span></span>
+    <span class="m-item">Works Offline <span>·</span></span>
+    <span class="m-item">Dashboard <span>·</span></span>
+    <span class="m-item">Pie Chart <span>·</span></span>
+    <span class="m-item">Monthly Reports <span>·</span></span>
+    <span class="m-item">CSV Export &amp; Import <span>·</span></span>
+    <span class="m-item">Budget Limits <span>·</span></span>
+    <span class="m-item">Receipt Photos <span>·</span></span>
+    <span class="m-item">Recurring Expenses <span>·</span></span>
+    <span class="m-item">P&amp;L Summary <span>·</span></span>
+    <span class="m-item">Multi-Branch <span>·</span></span>
+    <span class="m-item">Google Sheets Sync <span>·</span></span>
+    <span class="m-item">PDF Export <span>·</span></span>
+    <span class="m-item">Works Offline <span>·</span></span>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<section id="features" style="max-width:1100px;margin:0 auto;">
+  <div class="reveal">
+    <div class="s-lbl">Every feature you need</div>
+    <h2 class="s-title serif">Built for how small businesses<br>actually track costs</h2>
+    <p class="s-sub">No accountant needed. No formulas. Log an expense in 10 seconds — reports are ready instantly.</p>
+  </div>
+  <div class="feat-grid reveal" style="transition-delay:.1s;">
+    <div class="feat">
+      <div class="feat-ico fi-a">📊</div>
+      <div class="feat-name">Live Dashboard</div>
+      <div class="feat-desc">This month vs last month, year-to-date total, daily average, 6-month trend chart, and a pie chart showing your category breakdown — all live.</div>
+      <span class="feat-tag tag-all">All plans</span>
+    </div>
+    <div class="feat">
+      <div class="feat-ico fi-t">🧾</div>
+      <div class="feat-name">Expense Log</div>
+      <div class="feat-desc">Log any expense in under 10 seconds. Search and filter by category, month, or payment type. Edit or delete any entry. Unlimited entries, no cap.</div>
+      <span class="feat-tag tag-all">All plans</span>
+    </div>
+    <div class="feat">
+      <div class="feat-ico fi-s">📈</div>
+      <div class="feat-name">Monthly Reports</div>
+      <div class="feat-desc">Pick any month or the full year. See total, largest expense, category breakdown, payment method split, and a 12-month bar chart.</div>
+      <span class="feat-tag tag-all">All plans</span>
+    </div>
+    <div class="feat">
+      <div class="feat-ico fi-a">🚨</div>
+      <div class="feat-name">Budget Limits</div>
+      <div class="feat-desc">Set a monthly spending cap per category. Red alert bar on the dashboard when you exceed it — catch overspending before the month ends.</div>
+      <span class="feat-tag tag-pro">Pro &amp; Business</span>
+    </div>
+    <div class="feat">
+      <div class="feat-ico fi-t">📷</div>
+      <div class="feat-name">Receipt Photos</div>
+      <div class="feat-desc">Snap any paper receipt and attach it to the expense entry. No more lost receipts. Stored in your browser — no cloud account needed.</div>
+      <span class="feat-tag tag-pro">Pro &amp; Business</span>
+    </div>
+    <div class="feat">
+      <div class="feat-ico fi-s">🔁</div>
+      <div class="feat-name">Recurring Expenses</div>
+      <div class="feat-desc">Set monthly fixed costs once — rent, internet, utilities. The app reminds you on the due date and auto-logs it. Never forget a recurring cost again.</div>
+      <span class="feat-tag tag-pro">Pro &amp; Business</span>
+    </div>
+    <div class="feat">
+      <div class="feat-ico fi-a">🏢</div>
+      <div class="feat-name">Multi-Branch View</div>
+      <div class="feat-desc">Add unlimited branches. Each location tracks its own expenses separately. Switch branches to see location-specific reports and totals.</div>
+      <span class="feat-tag tag-biz">Business only</span>
+    </div>
+    <div class="feat">
+      <div class="feat-ico fi-t">📋</div>
+      <div class="feat-name">Google Sheets Sync</div>
+      <div class="feat-desc">One click syncs everything to a Google Sheet your accountant can access. Generates a monthly summary tab automatically.</div>
+      <span class="feat-tag tag-biz">Business only</span>
+    </div>
+    <div class="feat">
+      <div class="feat-ico fi-s">📱</div>
+      <div class="feat-name">Offline + Mobile</div>
+      <div class="feat-desc">Works offline — no internet after setup. Add to your phone home screen and it opens like a native app. Works on all devices.</div>
+      <span class="feat-tag tag-all">All plans</span>
+    </div>
+  </div>
+</section>
+
+<!-- WHO IT'S FOR -->
+<section id="who" style="background:var(--cream-dk);">
+  <div style="max-width:1100px;margin:0 auto;">
+    <div class="reveal" style="text-align:center;">
+      <div class="s-lbl">Perfect for</div>
+      <h2 class="s-title serif">Any service business that wants to<br>know exactly where money goes</h2>
+    </div>
+    <div class="who-grid reveal" style="transition-delay:.1s;">
+      <div class="who"><div class="who-ico">✂️</div><div class="who-name">Salons &amp; Barbershops</div><div class="who-desc">Track supplies, utilities, and staff costs per month</div></div>
+      <div class="who"><div class="who-ico">🌸</div><div class="who-name">Aesthetic Clinics</div><div class="who-desc">Log consumables, rent, and equipment per branch</div></div>
+      <div class="who"><div class="who-ico">🏋️</div><div class="who-name">Gyms &amp; Studios</div><div class="who-desc">Track equipment, payroll, and marketing spend</div></div>
+      <div class="who"><div class="who-ico">🔧</div><div class="who-name">Repair Shops</div><div class="who-desc">Log parts costs and overhead expenses monthly</div></div>
+      <div class="who"><div class="who-ico">📚</div><div class="who-name">Tutoring Centers</div><div class="who-desc">Track materials, venue, and utility costs</div></div>
+      <div class="who"><div class="who-ico">🎉</div><div class="who-name">Event Coordinators</div><div class="who-desc">Log expenses per event with category breakdown</div></div>
+      <div class="who"><div class="who-ico">💆</div><div class="who-name">Wellness &amp; Spas</div><div class="who-desc">Track product usage, staff, and utilities</div></div>
+      <div class="who"><div class="who-ico">🏪</div><div class="who-name">Any Small Business</div><div class="who-desc">If you spend money to run it — this is for you</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPARISON -->
+<section class="comp-sec">
+  <div style="max-width:1000px;margin:0 auto;">
+    <div class="reveal">
+      <div class="s-lbl">Why Servly Expenses</div>
+      <h2 class="s-title serif">Stop paying monthly for something<br>you can own once</h2>
+      <p class="s-sub">Accounting apps charge ₱500–₱2,000 every month forever. You pay once. That's it.</p>
+    </div>
+    <div class="comp-grid reveal" style="transition-delay:.1s;">
+      <div class="comp comp-them">
+        <div class="comp-ttl">Other apps (QuickBooks, Wave, etc.)</div>
+        <div class="comp-row"><span>❌</span> ₱500–₱2,000/month, forever</div>
+        <div class="comp-row"><span>❌</span> Cancel = lose access to your own data</div>
+        <div class="comp-row"><span>❌</span> Data on their servers</div>
+        <div class="comp-row"><span>❌</span> Built for big businesses — overkill</div>
+        <div class="comp-row"><span>❌</span> Requires internet always</div>
+        <div class="comp-row"><span>❌</span> Complex setup, months of learning</div>
+      </div>
+      <div class="comp comp-us">
+        <div class="comp-ttl">Servly Expenses</div>
+        <div class="comp-row"><span>✅</span> Pay once, own forever</div>
+        <div class="comp-row"><span>✅</span> Data is always yours — export anytime</div>
+        <div class="comp-row"><span>✅</span> Data stays on your own device</div>
+        <div class="comp-row"><span>✅</span> Built for Philippine service businesses</div>
+        <div class="comp-row"><span>✅</span> 100% offline capable</div>
+        <div class="comp-row"><span>✅</span> Up and running in 2 minutes</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section style="max-width:1000px;margin:0 auto;">
+  <div class="reveal" style="text-align:center;">
+    <div class="s-lbl">Simple setup</div>
+    <h2 class="s-title serif">Up and running in 2 minutes</h2>
+    <p class="s-sub" style="margin:0 auto;">No installation. No account. No Google Sheets needed. Just open and start.</p>
+  </div>
+  <div class="steps reveal" style="transition-delay:.1s;">
+    <div class="step">
+      <div class="step-n sn1 serif">1</div>
+      <div class="step-ttl">Choose your plan</div>
+      <div class="step-desc">Pick Basic, Pro, or Business based on what your business needs. Pay once.</div>
+    </div>
+    <div class="step">
+      <div class="step-n sn2 serif">2</div>
+      <div class="step-ttl">Pay &amp; submit order</div>
+      <div class="step-desc">Pay via GCash, Maya, or bank transfer. Submit the order form with your reference number.</div>
+    </div>
+    <div class="step">
+      <div class="step-n sn3 serif">3</div>
+      <div class="step-ttl">Receive your files</div>
+      <div class="step-desc">We verify your payment and send the files to your email within 24 hours.</div>
+    </div>
+    <div class="step">
+      <div class="step-n sn4 serif">4</div>
+      <div class="step-ttl">Open &amp; start logging</div>
+      <div class="step-desc">Double-click the HTML file in any browser. Log your first expense. Dashboard updates instantly.</div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing" class="price-sec">
+  <div style="max-width:1000px;margin:0 auto;">
+    <div class="reveal" style="text-align:center;">
+      <div class="s-lbl">Simple pricing</div>
+      <h2 class="s-title serif">One-time. No surprises.<br>Upgrade anytime.</h2>
+      <p class="s-sub" style="margin:0 auto;">Pay once and the app is yours forever. Upgrade to a higher plan by just paying the difference.</p>
+    </div>
+    <div class="price-grid reveal" style="transition-delay:.1s;">
+
+      <!-- BASIC -->
+      <div class="p-card">
+        <div class="p-tier">Basic</div>
+        <div class="p-price serif">₱299</div>
+        <div class="p-period">one-time · no expiry</div>
+        <div class="p-desc">For solo owners who want simple, clear expense tracking and monthly reports.</div>
+        <hr>
+        <div class="p-feat"><span class="p-feat-ico">✓</span>Unlimited expense entries</div>
+        <div class="p-feat"><span class="p-feat-ico">✓</span>Live dashboard + pie chart</div>
+        <div class="p-feat"><span class="p-feat-ico">✓</span>Monthly &amp; yearly reports</div>
+        <div class="p-feat"><span class="p-feat-ico">✓</span>CSV export &amp; import</div>
+        <div class="p-feat"><span class="p-feat-ico">✓</span>8 preset categories</div>
+        <div class="p-feat"><span class="p-feat-ico">✓</span>Works offline</div>
+        <div class="p-feat"><span class="p-feat-ico">✓</span>Setup guide included</div>
+        <a href="sales.html?plan=basic" class="p-btn p-btn-outline">Get Basic — ₱299</a>
+      </div>
+
+      <!-- PRO -->
+      <div class="p-card hot">
+        <div class="p-popular">Most Popular</div>
+        <div class="p-tier">Professional</div>
+        <div class="p-price serif">₱599</div>
+        <div class="p-period">one-time · no expiry</div>
+        <div class="p-desc">For growing businesses that need budget control and smarter financial visibility.</div>
+        <hr>
+        <div class="p-feat"><span class="p-feat-ico">✓</span>Everything in Basic</div>
+        <div class="p-feat"><span class="p-feat-ico">✓</span>Budget limit per category</div>
+        <div class="p-feat"><span class="p-feat-ico">✓</span>Over-budget alerts</div>
+        <div class="p-feat"><span class="p-feat-ico">✓</span>Receipt photo attachment</div>
+        <div class="p-feat"><span class="p-feat-ico">✓</span>Recurring expense tracker</div>
+        <div class="p-feat"><span class="p-feat-ico">✓</span>Profit &amp; loss summary</div>
+        <div class="p-feat"><span class="p-feat-ico">✓</span>Custom categories (unlimited)</div>
+        <div class="p-feat"><span class="p-feat-ico">✓</span>14-day email support</div>
+        <a href="sales.html?plan=pro" class="p-btn p-btn-amber">Get Pro — ₱599</a>
+      </div>
+
+      <!-- BUSINESS -->
+      <div class="p-card">
+        <div class="p-tier">Business</div>
+        <div class="p-price serif">₱999</div>
+        <div class="p-period">one-time · no expiry</div>
+        <div class="p-desc">For multi-branch businesses with teams and an accountant to report to every month.</div>
+        <hr>
+        <div class="p-feat"><span class="p-feat-ico">✓</span>Everything in Pro</div>
+        <div class="p-feat"><span class="p-feat-ico">✓</span>Multi-branch / location view</div>
+        <div class="p-feat"><span class="p-feat-ico">✓</span>Staff expense logging</div>
+        <div class="p-feat"><span class="p-feat-ico">✓</span>Approval workflow</div>
+        <div class="p-feat"><span class="p-feat-ico">✓</span>Google Sheets sync</div>
+        <div class="p-feat"><span class="p-feat-ico">✓</span>PDF report export</div>
+        <div class="p-feat"><span class="p-feat-ico">✓</span>Custom branding + color</div>
+        <div class="p-feat"><span class="p-feat-ico">✓</span>30-day priority support</div>
+        <a href="sales.html?plan=business" class="p-btn p-btn-teal">Get Business — ₱999</a>
+      </div>
+    </div>
+    <p class="upgrade-note reveal" style="transition-delay:.2s;">
+      Can upgrade later by paying the difference &nbsp;·&nbsp; Installment available on Business plan &nbsp;·&nbsp;
+      <a href="https://m.me/mclubcreo" target="_blank">Message us with questions</a>
+    </p>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq" style="max-width:880px;margin:0 auto;">
+  <div class="reveal" style="text-align:center;">
+    <div class="s-lbl">Questions</div>
+    <h2 class="s-title serif">Things business owners ask<br>before buying</h2>
+  </div>
+  <div class="faq-wrap reveal" style="transition-delay:.1s;">
+    <div class="faq-item">
+      <button class="faq-q" onclick="faq(this)">Is my data safe? Where is it stored?<span class="faq-icon">+</span></button>
+      <div class="faq-a">All your expense data is stored in your browser's localStorage — on your own device. Nothing is sent to any server. No one else can see your data. Export a CSV anytime to keep a permanent backup.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="faq(this)">How do I receive the files after paying?<span class="faq-icon">+</span></button>
+      <div class="faq-a">After you submit your order and we verify your GCash / Maya / bank payment — usually within a few hours — we email the files directly to the email address you give on the checkout form.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="faq(this)">Do I need the internet to use it?<span class="faq-icon">+</span></button>
+      <div class="faq-a">No. After opening the file once while connected, it works completely offline. Log expenses, view reports, and export CSV with no internet. Charts need internet on first load then they cache automatically.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="faq(this)">Can I use it on my phone?<span class="faq-icon">+</span></button>
+      <div class="faq-a">Yes. Open the file in Safari (iPhone) or Chrome (Android), tap Share → Add to Home Screen. It installs as an icon and opens full-screen like a native app. There's also a bottom tab bar designed for mobile.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="faq(this)">Can I upgrade later?<span class="faq-icon">+</span></button>
+      <div class="faq-a">Yes — just pay the difference. Basic → Pro is ₱300. Pro → Business is ₱400. All your existing data carries over with no migration. Message us on Facebook to arrange an upgrade.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="faq(this)">What payment methods do you accept?<span class="faq-icon">+</span></button>
+      <div class="faq-a">GCash and Maya to 0919 662 8224 (Marianne M. · Servly), or BPI bank transfer to account 2829140848 (Marianne Marave · Servly). Installment is available for the Business plan — message us to arrange.</div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-sec">
+  <div style="position:relative;z-index:1;">
+    <div class="s-lbl">Get started today</div>
+    <h2 class="s-title serif">Know exactly where<br>your money goes.</h2>
+    <p class="s-sub">One-time payment. Files sent to your email. No subscriptions, ever.</p>
+    <div class="hero-btns">
+      <a href="sales.html" class="btn-main">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        See Plans &amp; Buy Now
+      </a>
+      <a href="#faq" class="btn-ghost" style="color:rgba(245,240,232,.6);border-color:rgba(245,240,232,.2);">Read FAQ →</a>
+    </div>
+    <p style="margin-top:26px;font-size:12px;color:rgba(245,240,232,.28);">GCash · Maya · BPI Bank Transfer · Files delivered within 24 hours</p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="f-logo">Serv<span>ly</span> Expenses</div>
+  <div class="f-links">
+    <a href="#features">Features</a>
+    <a href="#pricing">Pricing</a>
+    <a href="#faq">FAQ</a>
+    <a href="setup-guide.html">Setup Guide</a>
+    <a href="https://m.me/mclubcreo" target="_blank">Contact</a>
+  </div>
+  <div class="f-copy">© 2026 Servly by Marianne Marave · All rights reserved</div>
+</footer>
+
+<script>
+// Scroll reveal
+const obs = new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:.1});
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+
+// Nav shadow
+window.addEventListener('scroll',()=>{
+  document.getElementById('nav').style.boxShadow=window.scrollY>20?'0 2px 20px rgba(30,45,45,.08)':'none';
+});
+
+// FAQ
+function faq(btn){
+  const item=btn.parentElement;
+  const open=item.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(i=>i.classList.remove('open'));
+  if(!open)item.classList.add('open');
+}
+</script>
+</body>
+</html>
