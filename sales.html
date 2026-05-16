@@ -547,11 +547,14 @@ function submitOrder(tier){
   document.getElementById('card-'+tier).scrollIntoView({behavior:'smooth',block:'start'});
 
   // POST to GAS — logs order, emails YOU, sends files to CLIENT
+  // mode: 'no-cors' is required for Google Apps Script URLs
   if(GAS_URL){
     fetch(GAS_URL, {
       method:  'POST',
-      headers: { 'Content-Type': 'application/json' },
+      mode:    'no-cors',
       body:    JSON.stringify(order)
+    }).then(function(){
+      console.log('GAS notified successfully');
     }).catch(function(err){
       console.warn('GAS post failed (order saved locally):', err);
     });
@@ -563,7 +566,7 @@ function submitOrder(tier){
 // This makes orders email you AND sends files to clients
 // automatically. See setup guide for instructions.
 // ============================================================
-var GAS_URL = 'https://script.google.com/macros/s/AKfycbzltGwCTezGFjb33gc2q4M5JDi2z1hRptdDbGNAPpma6fATslvP3WdCD8ajqY_x0eFe/exec'; // ← PASTE YOUR GAS WEB APP URL HERE
+var GAS_URL = ''; // ← PASTE YOUR GAS WEB APP URL HERE
 
 // ── INIT — read ?plan= from landing page, default to pro ────────
 (function(){
